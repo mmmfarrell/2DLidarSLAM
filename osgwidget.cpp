@@ -19,8 +19,11 @@
 #include <osgViewer/View>
 #include <osgViewer/ViewerEventHandlers>
 
+#include<osgDB/ReadFile>
+
 #include <stdexcept>
 #include <vector>
+#include <iostream> // TODO remove
 
 #include <QKeyEvent>
 #include <QPainter>
@@ -49,8 +52,31 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
   mViewer->realize();
   mView->home();
 
-  osg::Geode *geode{ this->create_sphere() };
-  mRoot->addChild(geode);
+  //osg::Geode *geode{ this->create_sphere() };
+  //mRoot->addChild(geode);
+
+  //osg::Object* object{ osgDB::readObjectFile("/home/mmmfarrell/Downloads/turtlebot.obj")}; // This works
+  //osg::Node* node{ osgDB::readNodeFile("/home/mmmfarrell/Downloads/robot.obj")};
+  osg::Node* node{ osgDB::readNodeFile("/home/mmmfarrell/Downloads/final_base.stl")};
+  //node->getOrCreateStateSet();
+
+  osg::Material *material{ new osg::Material };
+  material->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
+  material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.8, 0.1, 0.4, 1.0));
+
+  osg::StateSet *state{ node->getOrCreateStateSet() };
+  //stateSet->setAttributeAndModes(material, osg::StateAttribute::ON);
+  state->setAttributeAndModes(material, osg::StateAttribute::OVERRIDE |
+                                            osg::StateAttribute::ON);
+  //state->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OVERRIDE |
+                                              //osg::StateAttribute::OFF);
+  state->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+  //osg::Geode* geo{ node->asGeode()};
+  mRoot->addChild(node);
+  //std::cout << node->getNumDescriptions() << std::endl;
+  //node->ge
+
+  //std::cout << "num drawables: " << node->getNumDrawables() << std::endl;
 
   this->setFocusPolicy(Qt::StrongFocus);
   this->setMinimumSize(100, 100);
