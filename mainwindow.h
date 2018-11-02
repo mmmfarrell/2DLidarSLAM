@@ -23,8 +23,8 @@ public slots:
   void on_actionExit_triggered();
 
 private:
-  Ui::MainWindowForm *mMainWindowUI;
-  OSGWidget *mOSGWidget{ nullptr };
+  Ui::MainWindowForm *main_window_ui_;
+  OSGWidget *osg_widget_{ nullptr };
 };
 
 #endif  // MAINWINDOW_H

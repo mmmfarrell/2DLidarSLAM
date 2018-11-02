@@ -6,16 +6,16 @@
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow{parent},
-  mMainWindowUI{ new Ui::MainWindowForm },
-  mOSGWidget{ new OSGWidget{ this } }
+  main_window_ui_{ new Ui::MainWindowForm },
+  osg_widget_{ new OSGWidget{ this } }
 {
-  mMainWindowUI->setupUi(this);
-  this->setCentralWidget(mOSGWidget);
+  main_window_ui_->setupUi(this);
+  this->setCentralWidget(osg_widget_);
 }
 
 MainWindow::~MainWindow()
 {
-  delete mMainWindowUI;
+  delete main_window_ui_;
 }
 
 void MainWindow::on_actionExit_triggered()
