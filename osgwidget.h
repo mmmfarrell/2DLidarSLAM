@@ -9,7 +9,7 @@ namespace osg
 {
 class Group;
 class Camera;
-class Geode;
+class Node;
 }
 
 namespace osgViewer
@@ -31,7 +31,6 @@ class OSGWidget : public QOpenGLWidget
 
 public:
   OSGWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
-
   virtual ~OSGWidget();
 
 protected:
@@ -47,21 +46,21 @@ protected:
   virtual void mouseReleaseEvent(QMouseEvent *event);
   virtual void wheelEvent(QWheelEvent *event);
   virtual bool event(QEvent *event);
-  void repaint_osg_graphics_after_interaction(QEvent *event);
 
-private:
-  virtual void on_resize(int width, int height);
   osgGA::EventQueue *getEventQueue() const;
 
-  osg::ref_ptr<osgViewer::GraphicsWindowEmbedded> mGraphicsWindow;
-  osg::ref_ptr<osgViewer::CompositeViewer> mViewer;
-  osg::ref_ptr<osgViewer::View> mView;
-  osg::ref_ptr<osg::Group> mRoot;
+  void repaintOSGGraphicsAfterInteraction(QEvent *event);
+  virtual void onResize(int width, int height);
+  unsigned int getMouseButtonNumber(QMouseEvent *event);
 
-  unsigned int get_mouse_button_number(QMouseEvent *event);
-  osg::Camera* create_camera();
-  osg::Geode* create_sphere();
-  osgGA::TrackballManipulator* create_manipulator();
+  osg::Camera* createCamera();
+  osgGA::TrackballManipulator* createManipulator();
+  osg::Node* createRobot();
+
+  osg::ref_ptr<osgViewer::GraphicsWindowEmbedded> graphics_window_;
+  osg::ref_ptr<osgViewer::CompositeViewer> viewer_;
+  osg::ref_ptr<osgViewer::View> view_;
+  osg::ref_ptr<osg::Group> root_;
 };
 
 #endif

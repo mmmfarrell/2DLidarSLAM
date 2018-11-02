@@ -31,57 +31,33 @@
 
 OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) : 
   QOpenGLWidget{ parent, flags },
-  mGraphicsWindow{ new osgViewer::GraphicsWindowEmbedded{
+  graphics_window_{ new osgViewer::GraphicsWindowEmbedded{
         this->x(), this->y(), this->width(), this->height() } },
-  mViewer{ new osgViewer::CompositeViewer },
-  mView{ new osgViewer::View},
-  mRoot{ new osg::Group }
+  viewer_{ new osgViewer::CompositeViewer },
+  view_{ new osgViewer::View},
+  root_{ new osg::Group }
 {
-  osg::ref_ptr<osg::Camera> camera{ this->create_camera() };
-  mView->setCamera(camera);
+  osg::ref_ptr<osg::Camera> camera{ this->createCamera() };
+  view_->setCamera(camera);
 
-  mView->setSceneData(mRoot.get());
-  mView->addEventHandler(new osgViewer::StatsHandler);
+  view_->setSceneData(root_.get());
+  view_->addEventHandler(new osgViewer::StatsHandler);
 
   osg::ref_ptr<osgGA::TrackballManipulator> manipulator{
-    this->create_manipulator() };
-  mView->setCameraManipulator(manipulator);
+    this->createManipulator() };
+  view_->setCameraManipulator(manipulator);
 
-  mViewer->addView(mView);
-  mViewer->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
-  mViewer->realize();
-  mView->home();
+  viewer_->addView(view_);
+  viewer_->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
+  viewer_->realize();
+  view_->home();
 
-  //osg::Geode *geode{ this->create_sphere() };
-  //mRoot->addChild(geode);
-
-  //osg::Object* object{ osgDB::readObjectFile("/home/mmmfarrell/Downloads/turtlebot.obj")}; // This works
-  //osg::Node* node{ osgDB::readNodeFile("/home/mmmfarrell/Downloads/robot.obj")};
-  osg::Node* node{ osgDB::readNodeFile("/home/mmmfarrell/Downloads/final_base.stl")};
-  //node->getOrCreateStateSet();
-
-  osg::Material *material{ new osg::Material };
-  material->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
-  material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.8, 0.1, 0.4, 1.0));
-
-  osg::StateSet *state{ node->getOrCreateStateSet() };
-  //stateSet->setAttributeAndModes(material, osg::StateAttribute::ON);
-  state->setAttributeAndModes(material, osg::StateAttribute::OVERRIDE |
-                                            osg::StateAttribute::ON);
-  //state->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OVERRIDE |
-                                              //osg::StateAttribute::OFF);
-  state->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-  //osg::Geode* geo{ node->asGeode()};
-  mRoot->addChild(node);
-  //std::cout << node->getNumDescriptions() << std::endl;
-  //node->ge
-
-  //std::cout << "num drawables: " << node->getNumDrawables() << std::endl;
+  osg::ref_ptr<osg::Node> robotNode{ this-> createRobot() };
+  root_->addChild(robotNode);
 
   this->setFocusPolicy(Qt::StrongFocus);
   this->setMinimumSize(100, 100);
   this->setMouseTracking(true);
-
   this->update();
 }
 
@@ -105,69 +81,69 @@ void OSGWidget::paintEvent(QPaintEvent *)
 
 void OSGWidget::paintGL()
 {
-  mViewer->frame();
+  viewer_->frame();
 }
 
 void OSGWidget::resizeGL(int width, int height)
 {
   this->getEventQueue()->windowResize(this->x(), this->y(), width, height);
-  mGraphicsWindow->resized(this->x(), this->y(), width, height);
+  graphics_window_->resized(this->x(), this->y(), width, height);
 
-  this->on_resize(width, height);
+  this->onResize(width, height);
 }
 
 void OSGWidget::keyPressEvent(QKeyEvent *event)
 {
-  QString keyString{ event->text() };
-  const char *keyData{ keyString.toLocal8Bit().data() };
+  QString key_string{ event->text() };
+  const char *key_data{ key_string.toLocal8Bit().data() };
 
   if (event->key() == Qt::Key_H)
   {
-    mView->home();
+    view_->home();
     return;
   }
 
-  this->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KeySymbol(*keyData));
+  this->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KeySymbol(*key_data));
 }
 
 void OSGWidget::keyReleaseEvent(QKeyEvent *event)
 {
-  QString keyString{ event->text() };
-  const char *keyData{ keyString.toLocal8Bit().data() };
+  QString key_string{ event->text() };
+  const char *key_data{ key_string.toLocal8Bit().data() };
 
   this->getEventQueue()->keyRelease(
-      osgGA::GUIEventAdapter::KeySymbol(*keyData));
+      osgGA::GUIEventAdapter::KeySymbol(*key_data));
 }
 
 void OSGWidget::mouseMoveEvent(QMouseEvent *event)
 {
-  auto pixelRatio{ this->devicePixelRatio() };
+  auto pixel_ratio{ this->devicePixelRatio() };
 
   this->getEventQueue()->mouseMotion(
-      static_cast<float>(event->x() * pixelRatio),
-      static_cast<float>(event->y() * pixelRatio));
+      static_cast<float>(event->x() * pixel_ratio),
+      static_cast<float>(event->y() * pixel_ratio));
 }
 
 void OSGWidget::mousePressEvent(QMouseEvent *event)
 {
-  unsigned int button{ this->get_mouse_button_number(event) };
+  unsigned int button{ this->getMouseButtonNumber(event) };
 
-  auto pixelRatio{ this->devicePixelRatio() };
+  auto pixel_ratio{ this->devicePixelRatio() };
 
   this->getEventQueue()->mouseButtonPress(
-      static_cast<float>(event->x() * pixelRatio),
-      static_cast<float>(event->y() * pixelRatio), button);
+      static_cast<float>(event->x() * pixel_ratio),
+      static_cast<float>(event->y() * pixel_ratio), button);
 }
 
 void OSGWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-  unsigned int button{ this->get_mouse_button_number(event) };
+  unsigned int button{ this->getMouseButtonNumber(event) };
 
-  auto pixelRatio{ this->devicePixelRatio() };
+  auto pixel_ratio{ this->devicePixelRatio() };
 
   this->getEventQueue()->mouseButtonRelease(
-      static_cast<float>(pixelRatio * event->x()),
-      static_cast<float>(pixelRatio * event->y()), button);
+      static_cast<float>(pixel_ratio * event->x()),
+      static_cast<float>(pixel_ratio * event->y()), button);
 }
 
 void OSGWidget::wheelEvent(QWheelEvent *event)
@@ -186,12 +162,12 @@ bool OSGWidget::event(QEvent *event)
 {
   bool handled{ QOpenGLWidget::event(event) };
 
-  repaint_osg_graphics_after_interaction(event);
+  repaintOSGGraphicsAfterInteraction(event);
 
   return handled;
 }
 
-void OSGWidget::repaint_osg_graphics_after_interaction(QEvent *event)
+void OSGWidget::repaintOSGGraphicsAfterInteraction(QEvent *event)
 {
   switch (event->type())
   {
@@ -210,22 +186,23 @@ void OSGWidget::repaint_osg_graphics_after_interaction(QEvent *event)
   }
 }
 
-void OSGWidget::on_resize(int width, int height)
+void OSGWidget::onResize(int width, int height)
 {
   std::vector<osg::Camera *> cameras;
-  mViewer->getCameras(cameras);
+  viewer_->getCameras(cameras);
 
-  int viewportX{ 0 };
-  int viewportY{ 0 };
-  auto pixelRatio{ this->devicePixelRatio() };
-  int viewportWidth{ width * pixelRatio };
-  int viewportHeight{ height * pixelRatio };
-  cameras[0]->setViewport(viewportX, viewportY, viewportWidth, viewportHeight);
+  int viewport_x{ 0 };
+  int viewport_y{ 0 };
+  auto pixel_ratio{ this->devicePixelRatio() };
+  int viewport_width{ width * pixel_ratio };
+  int viewport_height{ height * pixel_ratio };
+  cameras[0]->setViewport(viewport_x, viewport_y, viewport_width,
+                          viewport_height);
 }
 
 osgGA::EventQueue *OSGWidget::getEventQueue() const
 {
-  osgGA::EventQueue *eventQueue{ mGraphicsWindow->getEventQueue() };
+  osgGA::EventQueue *eventQueue{ graphics_window_->getEventQueue() };
 
   if (eventQueue)
     return eventQueue;
@@ -233,26 +210,26 @@ osgGA::EventQueue *OSGWidget::getEventQueue() const
     throw std::runtime_error("Unable to obtain valid event queue");
 }
 
-unsigned int OSGWidget::get_mouse_button_number(QMouseEvent *event)
+unsigned int OSGWidget::getMouseButtonNumber(QMouseEvent *event)
 {
   unsigned int button{ 0 };
 
-  unsigned int leftMouseButton{ 1 };
-  unsigned int middleMouseButton{ 2 };
-  unsigned int rightMouseButton{ 3 };
+  unsigned int left_mouse_button{ 1 };
+  unsigned int middle_mouse_button{ 2 };
+  unsigned int right_mouse_button{ 3 };
 
   switch (event->button())
   {
     case Qt::LeftButton:
-      button = leftMouseButton;
+      button = left_mouse_button;
       break;
 
     case Qt::MiddleButton:
-      button = middleMouseButton;
+      button = middle_mouse_button;
       break;
 
     case Qt::RightButton:
-      button = rightMouseButton;
+      button = right_mouse_button;
       break;
 
     default:
@@ -262,67 +239,60 @@ unsigned int OSGWidget::get_mouse_button_number(QMouseEvent *event)
   return button;
 }
 
-osg::Camera* OSGWidget::create_camera()
+osg::Camera* OSGWidget::createCamera()
 {
   osg::Camera *camera{ new osg::Camera };
 
-  int viewportX{ 0 };
-  int viewportY{ 0 };
-  auto pixelRatio{ this->devicePixelRatio() };
-  int viewportWidth{ this->width() * pixelRatio };
-  int viewportHeight{ this->height() * pixelRatio };
-  camera->setViewport(viewportX, viewportY, viewportWidth, viewportHeight);
+  int viewport_x{ 0 };
+  int viewport_y{ 0 };
+  auto pixel_ratio{ this->devicePixelRatio() };
+  int viewport_width{ this->width() * pixel_ratio };
+  int viewport_height{ this->height() * pixel_ratio };
+  camera->setViewport(viewport_x, viewport_y, viewport_width, viewport_height);
 
-  osg::Vec4 blackColorRGBA{ 0.f, 0.f, 0.f, 1.f };
-  camera->setClearColor(blackColorRGBA);
+  osg::Vec4 white_color_rgba{ 1.f, 1.f, 1.f, 1.f };
+  camera->setClearColor(white_color_rgba);
 
-  float cameraFOV{ 45.0 };
-  float cameraMinVisibleDistance{ 1.0 };
-  float cameraMaxVisibleDistance{ 1000.0 };
-  float aspectRatio{ static_cast<float>(this->width()) /
-                     static_cast<float>(this->height()) };
-  camera->setProjectionMatrixAsPerspective(cameraFOV, aspectRatio,
-                                           cameraMinVisibleDistance,
-                                           cameraMaxVisibleDistance);
+  float camera_fov{ 45.0f };
+  float camera_min_visible_distance{ 1.0f };
+  float camera_max_visible_distance{ 1000.0f };
+  float aspect_ratio{ static_cast<float>(this->width()) /
+                      static_cast<float>(this->height()) };
+  camera->setProjectionMatrixAsPerspective(camera_fov, aspect_ratio,
+                                           camera_min_visible_distance,
+                                           camera_max_visible_distance);
 
-  camera->setGraphicsContext(this->mGraphicsWindow);
+  camera->setGraphicsContext(this->graphics_window_);
 
   return camera;
 }
 
-osg::Geode *OSGWidget::create_sphere()
-{
-  osg::Vec3 sphereCenter{ 0.f, 0.f, 0.f };
-  float sphereRadius{ 2.0 };
-  osg::Sphere *sphere{ new osg::Sphere{ sphereCenter, sphereRadius } };
-  osg::ShapeDrawable *sd{ new osg::ShapeDrawable{ sphere } };
 
-  osg::Vec4 aquaColorRGBA{ 0.f, 1.f, 1.f, 1.f };
-  sd->setColor(aquaColorRGBA);
-  sd->setName("Sphere");
-
-  osg::Geode *geode{ new osg::Geode };
-  geode->addDrawable(sd);
-
-  osg::Material *material{ new osg::Material };
-  material->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
-
-  osg::StateSet *stateSet{ geode->getOrCreateStateSet() };
-  stateSet->setAttributeAndModes(material, osg::StateAttribute::ON);
-  stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-
-  return geode;
-}
-
-osgGA::TrackballManipulator *OSGWidget::create_manipulator()
+osgGA::TrackballManipulator *OSGWidget::createManipulator()
 {
   osgGA::TrackballManipulator *manipulator{ new osgGA::TrackballManipulator };
   manipulator->setAllowThrow(false);
 
-  osg::Vec3 homeEyePosition{ 0.f, -20.f, 3.f };
-  osg::Vec3 homeCenterPosition{ 0.f, 0.f, 0.f };
-  osg::Vec3 homeUpDirectionVector{ 0.f, 0.f, 1.f };
-  manipulator->setHomePosition(homeEyePosition, homeCenterPosition,
-                               homeUpDirectionVector);
+  osg::Vec3 home_eye_position{ 0.f, -20.f, 3.f };
+  osg::Vec3 home_center_position{ 0.f, 0.f, 0.f };
+  osg::Vec3 home_up_direction_vector{ 0.f, 0.f, 1.f };
+  manipulator->setHomePosition(home_eye_position, home_center_position,
+                               home_up_direction_vector);
   return manipulator;
+}
+
+osg::Node *OSGWidget::createRobot()
+{
+  std::string robot_mesh_file{ "../meshes/robot.stl" };
+  osg::Node* robot_node{ osgDB::readNodeFile(robot_mesh_file)};
+
+  osg::ref_ptr<osg::Material> material{ new osg::Material };
+  material->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
+  osg::Vec4 black_color_rgba{ 0.f, 0.f, 0.f, 1.f };
+  material->setDiffuse(osg::Material::FRONT_AND_BACK, black_color_rgba);
+
+  osg::StateSet *stateSet{ robot_node->getOrCreateStateSet() };
+  stateSet->setAttributeAndModes(material, osg::StateAttribute::ON);
+  stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+  return robot_node;
 }
