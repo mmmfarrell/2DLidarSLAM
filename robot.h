@@ -13,6 +13,7 @@ public:
 
   void moveForward();
   void rotateRight();
+  void rotateLeft();
 
 private:
   Pose pose_;

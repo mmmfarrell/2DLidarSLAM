@@ -27,3 +27,8 @@ void Robot::rotateRight()
 {
   pose_.heading -= 0.0872665;
 }
+
+void Robot::rotateLeft()
+{
+  pose_.heading += 0.0872665;
+}

@@ -57,3 +57,18 @@ TEST(ARobot, rotateRight_NewPoseNegative5Degrees)
 
   posesNear(trueNewPose, robot.getPose());
 }
+
+TEST(ARobot, rotateLeft_NewPosePositive5Degrees)
+{
+  Robot robot;
+  robot.rotateLeft();
+
+  Pose trueNewPose;
+  trueNewPose.x = 0.0;
+  trueNewPose.y = 0.0;
+  double degrees{ 5.0 };
+  double radians{ degrees * M_PI / 180. };
+  trueNewPose.heading = radians;
+
+  posesNear(trueNewPose, robot.getPose());
+}
