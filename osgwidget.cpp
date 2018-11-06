@@ -5,6 +5,7 @@
 #include <osg/Group>
 #include <osg/Camera>
 #include <osg/Geode>
+#include <osg/Geometry>
 #include <osg/Material>
 #include <osg/PositionAttitudeTransform>
 #include <osg/Shape>
@@ -16,6 +17,7 @@
 #include <osgGA/TrackballManipulator>
 #include <osgGA/EventQueue>
 #include <osgGA/GUIEventAdapter>
+#include <osgUtil/SmoothingVisitor>
 #include <osgViewer/GraphicsWindow>
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/View>
@@ -49,10 +51,16 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
     this->createManipulator() };
   view_->setCameraManipulator(manipulator);
 
+  osg::ref_ptr<osg::Geometry> floor{ this->createFloor() };
+  root_->addChild(floor);
+
+
   viewer_->addView(view_);
   viewer_->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
   viewer_->realize();
   view_->home();
+
+  this->setupViewCamera();
 
   this->setFocusPolicy(Qt::StrongFocus);
   this->setMinimumSize(100, 100);
@@ -313,4 +321,59 @@ osg::Node *OSGWidget::createRobot()
   stateSet->setAttributeAndModes(material, osg::StateAttribute::ON);
   stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
   return robot_node;
+}
+
+osg::Geometry *OSGWidget::createFloor()
+{
+  osg::ref_ptr<osg::Vec3Array> vertices{ new osg::Vec3Array };
+  osg::ref_ptr<osg::Vec2Array> tex_coords{ new osg::Vec2Array };
+  osg::ref_ptr<osg::Vec3Array> normals{ new osg::Vec3Array };
+
+  vertices->push_back(osg::Vec3(-100.0f, -100.0f, -0.01f));
+  vertices->push_back(osg::Vec3(-100.0f, 100.0f, -0.01f));
+  vertices->push_back(osg::Vec3(100.0f, 100.0f, -0.01f));
+  vertices->push_back(osg::Vec3(100.0f, -100.0f, -0.01f));
+
+  normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
+  normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
+  normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
+  normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
+
+  tex_coords->push_back( osg::Vec2(0.0f, 0.0f) );
+  tex_coords->push_back( osg::Vec2(0.0f, 10.0f) );
+  tex_coords->push_back( osg::Vec2(10.0f, 10.0f) );
+  tex_coords->push_back( osg::Vec2(10.0f, 0.0f) );
+
+  osg::Geometry *geom{ new osg::Geometry };
+  geom->setVertexArray(vertices);
+  geom->setNormalArray(normals, osg::Array::Binding::BIND_PER_VERTEX);
+  geom->addPrimitiveSet( new osg::DrawArrays(GL_QUADS, 0, 4));
+  geom->setTexCoordArray(0, tex_coords.get());
+  osgUtil::SmoothingVisitor::smooth(*geom);
+
+  geom->setTexCoordArray(0, tex_coords.get(),
+                         osg::Array::Binding::BIND_PER_VERTEX);
+
+  osg::ref_ptr<osg::Texture2D> texture{ new osg::Texture2D };
+  osg::ref_ptr<osg::Image> image{ osgDB::readImageFile(
+      "../meshes/tile.jpg") };
+  texture->setImage(image);
+  texture->setUnRefImageDataAfterApply(true);
+  texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
+  texture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
+
+  osg::StateSet *geom_state_set = geom->getOrCreateStateSet();
+  geom_state_set->setTextureAttributeAndModes(0, texture.get(),
+                                              osg::StateAttribute::ON);
+
+  return geom;
+}
+
+void OSGWidget::setupViewCamera()
+{
+  view_->setLightingMode(osg::View::SKY_LIGHT);
+
+  osg::Light *light{ view_->getLight() };
+  osg::Vec4 light_pos{ 0.f, 0.f, -1.f, 0.f };
+  light->setPosition(light_pos);
 }

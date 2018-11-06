@@ -12,6 +12,7 @@ namespace osg
 class Group;
 class Camera;
 class Node;
+class Geometry;
 }
 
 namespace osgViewer
@@ -60,6 +61,8 @@ protected:
   osg::Camera* createCamera();
   osgGA::TrackballManipulator* createManipulator();
   osg::Node* createRobot();
+  osg::Geometry* createFloor();
+  void setupViewCamera();
 
   osg::ref_ptr<osgViewer::GraphicsWindowEmbedded> graphics_window_;
   osg::ref_ptr<osgViewer::CompositeViewer> viewer_;
