@@ -15,9 +15,14 @@ SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTOUIC ON)
 SET(CMAKE_AUTORCC ON)
 
-IF(NOT WIN32)
+IF (NOT WIN32)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra")
     SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+ENDIF()
+
+IF (NOT TARGET gtest)
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  add_subdirectory(lib/googletest)
 ENDIF()
 
 SET(MYSOURCE
@@ -38,3 +43,10 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Widgets
     Qt5::Gui
 )
+
+add_executable(TestRobot
+  robot.cpp
+  robot.h
+  test_robot.cpp
+  )
+target_link_libraries(TestRobot gtest gtest_main)
