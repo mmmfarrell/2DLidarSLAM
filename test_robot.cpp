@@ -72,3 +72,19 @@ TEST(ARobot, rotateLeft_NewPosePositive5Degrees)
 
   posesNear(trueNewPose, robot.getPose());
 }
+
+TEST(ARobotRotated, moveForward_RobotMovesAlongItsFowardAxis)
+{
+  Robot robot;
+  double robot_heading_degrees(90.0);
+  robot.setHeadingDegrees(robot_heading_degrees);
+  robot.moveForward();
+
+  Pose trueNewPose;
+  trueNewPose.x = 0.0;
+  trueNewPose.y = 1.0;
+  double heading_radians{ robot_heading_degrees * M_PI / 180. };
+  trueNewPose.heading = heading_radians;
+
+  posesNear(trueNewPose, robot.getPose());
+}
