@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QKeyEvent>
 #include <QtCore>
 
 class OSGWidget;
@@ -22,7 +23,9 @@ public:
 public slots:
   void on_actionExit_triggered();
 
-private:
+  void keyPressEvent(QKeyEvent *event);
+
+protected:
   Ui::MainWindowForm *main_window_ui_;
   OSGWidget *osg_widget_{ nullptr };
 };

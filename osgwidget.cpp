@@ -43,9 +43,10 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
   view_->setSceneData(root_.get());
   view_->addEventHandler(new osgViewer::StatsHandler);
 
-  osg::ref_ptr<osgGA::TrackballManipulator> manipulator{
-    this->createManipulator() };
-  view_->setCameraManipulator(manipulator);
+  //osg::ref_ptr<osgGA::TrackballManipulator> manipulator{
+    //this->createManipulator() };
+  //view_->setCameraManipulator(manipulator);
+  view_->setCameraManipulator(new osgGA::TrackballManipulator());
 
   viewer_->addView(view_);
   viewer_->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
@@ -94,26 +95,28 @@ void OSGWidget::resizeGL(int width, int height)
 
 void OSGWidget::keyPressEvent(QKeyEvent *event)
 {
-  QString key_string{ event->text() };
-  const char *key_data{ key_string.toLocal8Bit().data() };
-
   if (event->key() == Qt::Key_H)
   {
     view_->home();
-    return;
+  }
+  else
+  {
+    QString key_string{ event->text() };
+    const char *key_data{ key_string.toLocal8Bit().data() };
+    this->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KeySymbol(*key_data));
   }
 
-  this->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KeySymbol(*key_data));
+  QOpenGLWidget::keyPressEvent(event);
 }
 
-void OSGWidget::keyReleaseEvent(QKeyEvent *event)
-{
-  QString key_string{ event->text() };
-  const char *key_data{ key_string.toLocal8Bit().data() };
+//void OSGWidget::keyReleaseEvent(QKeyEvent *event)
+//{
+  //QString key_string{ event->text() };
+  //const char *key_data{ key_string.toLocal8Bit().data() };
 
-  this->getEventQueue()->keyRelease(
-      osgGA::GUIEventAdapter::KeySymbol(*key_data));
-}
+  //this->getEventQueue()->keyRelease(
+      //osgGA::GUIEventAdapter::KeySymbol(*key_data));
+//}
 
 void OSGWidget::mouseMoveEvent(QMouseEvent *event)
 {

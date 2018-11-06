@@ -39,7 +39,7 @@ protected:
   virtual void resizeGL(int width, int height);
 
   virtual void keyPressEvent(QKeyEvent *event);
-  virtual void keyReleaseEvent(QKeyEvent *event);
+  //virtual void keyReleaseEvent(QKeyEvent *event);
 
   virtual void mouseMoveEvent(QMouseEvent *event);
   virtual void mousePressEvent(QMouseEvent *event);

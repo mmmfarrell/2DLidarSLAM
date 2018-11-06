@@ -2,7 +2,9 @@
 #include "ui_mainwindowform.h"
 #include "osgwidget.h"
 
+#include <iostream> // TODO remove
 #include <QDockWidget>
+#include <QKeyEvent>
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow{parent},
@@ -23,3 +25,12 @@ void MainWindow::on_actionExit_triggered()
   QApplication::quit();
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+  std::cout << "key press" << std::endl;
+  if (event->key() == Qt::Key_Up)
+  {
+    std::cout << "Up" << std::endl;
+  }
+  QMainWindow::keyPressEvent(event);
+}
