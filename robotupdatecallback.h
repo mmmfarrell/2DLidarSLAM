@@ -1,6 +1,7 @@
 #ifndef ROBOTUPDATECALLBACK_H
 #define ROBOTUPDATECALLBACK_H
 
+#include <osg/Matrixd>
 #include <osg/NodeCallback>
 
 class Robot;
@@ -15,6 +16,9 @@ public:
 
 private:
   Robot *robot_ptr_;
+  osg::Matrixd model_rotation_matrix_;
+
+  void computeModelRotationMatrix();
 };
 
 #endif /* ROBOTUPDATECALLBACK_H */

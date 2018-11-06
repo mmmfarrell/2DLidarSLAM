@@ -11,6 +11,7 @@
 RobotUpdateCallback::RobotUpdateCallback(Robot* robot) :
   robot_ptr_{ robot }
 {
+  this->computeModelRotationMatrix();
 }
 
 RobotUpdateCallback::~RobotUpdateCallback()
@@ -25,22 +26,26 @@ void RobotUpdateCallback::operator()(osg::Node *node, osg::NodeVisitor *nv)
     return;
 
   Pose robot_pose{ robot_ptr_->getPose() };
-  std::cout << "actual position: " << robot_pose.x << std::endl;
-  //osg::Vec3d newRobotPosition{ robot_pose.x, robot_pose.y, 0. };
-  //pat->setPosition(newRobotPosition);
+  osg::Vec3d newRobotPosition{ robot_pose.x, robot_pose.y, 0. };
+  pat->setPosition(newRobotPosition);
 
-  osg::Quat attitude{ pat->getAttitude() };
+  osg::Matrixd heading_rot_mat;
+  heading_rot_mat.makeRotate(robot_pose.heading, osg::Vec3(0, 1, 0));
 
-  osg::Matrixd mxR;
-  mxR.makeRotate(osg::DegreesToRadians(robot_pose.x),osg::Vec3(0,1,0));
-
-  osg::Matrixd mxP;
-  mxP.makeRotate(osg::DegreesToRadians(90.),osg::Vec3(1,0,0));
-  osg::Matrixd mxH;
-  mxH.makeRotate(osg::DegreesToRadians(45.),osg::Vec3(0,0,1));
-  osg::Matrixd total_transform{ mxR * mxP * mxH };
-  osg::Quat newRobotAttitude{ total_transform.getRotate() };
+  osg::Matrixd total_rot_mat{ heading_rot_mat * model_rotation_matrix_ };
+  osg::Quat newRobotAttitude{ total_rot_mat.getRotate() };
   pat->setAttitude(newRobotAttitude);
 
   traverse(node, nv);
+}
+
+void RobotUpdateCallback::computeModelRotationMatrix()
+{
+  osg::Matrixd model_roll_mat;
+  model_roll_mat.makeRotate(osg::DegreesToRadians(90.),osg::Vec3(1,0,0));
+
+  osg::Matrixd model_yaw_mat;
+  model_yaw_mat.makeRotate(osg::DegreesToRadians(45.),osg::Vec3(0,0,1));
+
+  model_rotation_matrix_ = model_roll_mat * model_yaw_mat;
 }
