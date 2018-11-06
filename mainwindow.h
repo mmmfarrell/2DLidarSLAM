@@ -1,9 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <memory>
 #include <QMainWindow>
 #include <QKeyEvent>
 #include <QtCore>
+
+#include "robot.h"
 
 class OSGWidget;
 
@@ -28,6 +31,8 @@ public slots:
 protected:
   Ui::MainWindowForm *main_window_ui_;
   OSGWidget *osg_widget_{ nullptr };
+
+  std::unique_ptr<Robot> robot_{ nullptr };
 };
 
 #endif  // MAINWINDOW_H

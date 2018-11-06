@@ -5,6 +5,8 @@
 
 #include <osg/ref_ptr>
 
+class Robot;
+
 namespace osg
 {
 class Group;
@@ -32,6 +34,8 @@ class OSGWidget : public QOpenGLWidget
 public:
   OSGWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
   virtual ~OSGWidget();
+
+  void displayRobot(Robot* robot);
 
 protected:
   virtual void paintEvent(QPaintEvent *paintEvent);
@@ -61,6 +65,8 @@ protected:
   osg::ref_ptr<osgViewer::CompositeViewer> viewer_;
   osg::ref_ptr<osgViewer::View> view_;
   osg::ref_ptr<osg::Group> root_;
+
+  Robot *robot_ptr_;
 };
 
 #endif

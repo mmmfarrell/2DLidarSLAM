@@ -1,10 +1,12 @@
 #include "osgwidget.h"
+#include "robotupdatecallback.h"
 
 #include <osg/ref_ptr>
 #include <osg/Group>
 #include <osg/Camera>
 #include <osg/Geode>
 #include <osg/Material>
+#include <osg/PositionAttitudeTransform>
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
 #include <osg/StateSet>
@@ -19,7 +21,7 @@
 #include <osgViewer/View>
 #include <osgViewer/ViewerEventHandlers>
 
-#include<osgDB/ReadFile>
+#include <osgDB/ReadFile>
 
 #include <stdexcept>
 #include <vector>
@@ -43,18 +45,14 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
   view_->setSceneData(root_.get());
   view_->addEventHandler(new osgViewer::StatsHandler);
 
-  //osg::ref_ptr<osgGA::TrackballManipulator> manipulator{
-    //this->createManipulator() };
-  //view_->setCameraManipulator(manipulator);
-  view_->setCameraManipulator(new osgGA::TrackballManipulator());
+  osg::ref_ptr<osgGA::TrackballManipulator> manipulator{
+    this->createManipulator() };
+  view_->setCameraManipulator(manipulator);
 
   viewer_->addView(view_);
   viewer_->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
   viewer_->realize();
   view_->home();
-
-  osg::ref_ptr<osg::Node> robotNode{ this-> createRobot() };
-  root_->addChild(robotNode);
 
   this->setFocusPolicy(Qt::StrongFocus);
   this->setMinimumSize(100, 100);
@@ -64,6 +62,23 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
 
 OSGWidget::~OSGWidget()
 {
+}
+
+void OSGWidget::displayRobot(Robot *robot)
+{
+  robot_ptr_ = robot;
+
+  osg::ref_ptr<osg::PositionAttitudeTransform> transform{
+    new osg::PositionAttitudeTransform };
+
+  osg::ref_ptr<RobotUpdateCallback> robotUpdateCallbackPtr{
+    new RobotUpdateCallback(robot_ptr_) };
+  transform->setUpdateCallback(robotUpdateCallbackPtr);
+
+  osg::ref_ptr<osg::Node> robotNode{ this-> createRobot() };
+  transform->addChild(robotNode);
+
+  root_->addChild(transform);
 }
 
 void OSGWidget::paintEvent(QPaintEvent *)

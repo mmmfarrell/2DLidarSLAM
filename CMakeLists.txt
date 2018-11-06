@@ -32,6 +32,8 @@ SET(MYSOURCE
     mainwindowform.ui
     osgwidget.h
     osgwidget.cpp
+    robot.cpp # TODO move to library?
+    robotupdatecallback.cpp
     )
 
 add_executable(${PROJECT_NAME}
