@@ -14,6 +14,7 @@ public:
   void setHeadingDegrees(double robot_heading_degrees);
 
   void moveForward();
+  void moveBackward();
   void rotateRight();
   void rotateLeft();
 

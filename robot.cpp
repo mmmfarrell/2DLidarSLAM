@@ -31,6 +31,12 @@ void Robot::moveForward()
   pose_.y += 1.0 * sin(pose_.heading);
 }
 
+void Robot::moveBackward()
+{
+  pose_.x -= 1.0 * cos(pose_.heading);
+  pose_.y -= 1.0 * sin(pose_.heading);
+}
+
 void Robot::rotateRight()
 {
   pose_.heading -= 0.0872665;

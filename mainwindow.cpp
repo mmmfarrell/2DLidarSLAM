@@ -35,7 +35,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
   {
     case Qt::Key_Up:
       robot_->moveForward();
-      std::cout << "Up" << std::endl;
+      break;
+    case Qt::Key_Down:
+      robot_->moveBackward();
       break;
     case Qt::Key_Right:
       robot_->rotateRight();
