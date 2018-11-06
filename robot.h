@@ -12,6 +12,7 @@ public:
   Pose getPose() const;
 
   void moveForward();
+  void rotateRight();
 
 private:
   Pose pose_;

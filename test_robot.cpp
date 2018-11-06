@@ -10,6 +10,14 @@ void posesEqual(Pose pose1, Pose pose2)
   EXPECT_EQ(pose1.heading, pose2.heading);
 }
 
+void posesNear(Pose pose1, Pose pose2)
+{
+  double abs_error{ 1e-5 };
+  EXPECT_NEAR(pose1.x, pose2.x, abs_error);
+  EXPECT_NEAR(pose1.y, pose2.y, abs_error);
+  EXPECT_NEAR(pose1.heading, pose2.heading, abs_error);
+}
+
 TEST(ARobot, initializeRobot_PoseAt0)
 {
   Robot robot;
@@ -33,4 +41,19 @@ TEST(ARobot, moveForward_NewPoseOneMeterForward)
   trueNewPose.heading = 0.0;
 
   posesEqual(trueNewPose, robot.getPose());
+}
+
+TEST(ARobot, rotateRight_NewPoseNegative5Degrees)
+{
+  Robot robot;
+  robot.rotateRight();
+
+  Pose trueNewPose;
+  trueNewPose.x = 0.0;
+  trueNewPose.y = 0.0;
+  double degrees{ -5.0 };
+  double radians{ degrees * M_PI / 180. };
+  trueNewPose.heading = radians;
+
+  posesNear(trueNewPose, robot.getPose());
 }

@@ -22,3 +22,8 @@ void Robot::moveForward()
 {
   pose_.x += 1.0;
 }
+
+void Robot::rotateRight()
+{
+  pose_.heading -= 0.0872665;
+}
