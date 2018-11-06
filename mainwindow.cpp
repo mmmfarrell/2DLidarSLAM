@@ -27,10 +27,16 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-  std::cout << "key press" << std::endl;
-  if (event->key() == Qt::Key_Up)
+  switch (event->key())
   {
-    std::cout << "Up" << std::endl;
+    case Qt::Key_Up:
+      std::cout << "Up" << std::endl;
+      break;
+    case Qt::Key_Escape:
+    case Qt::Key_Q:
+      QApplication::quit();
+      break;
   }
+
   QMainWindow::keyPressEvent(event);
 }
