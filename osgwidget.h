@@ -59,7 +59,7 @@ protected:
   unsigned int getMouseButtonNumber(QMouseEvent *event);
 
   osg::Camera* createCamera();
-  osgGA::TrackballManipulator* createManipulator();
+  //osgGA::TrackballManipulator* createManipulator();
   osg::Node* createRobot();
   osg::Geometry* createFloor();
   void setupViewCamera();

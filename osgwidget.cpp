@@ -14,7 +14,8 @@
 #include <osg/StateAttribute>
 #include <osg/Vec3>
 #include <osg/Vec4>
-#include <osgGA/TrackballManipulator>
+//#include <osgGA/TrackballManipulator>
+#include <osgGA/NodeTrackerManipulator>
 #include <osgGA/EventQueue>
 #include <osgGA/GUIEventAdapter>
 #include <osgUtil/SmoothingVisitor>
@@ -47,13 +48,12 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
   view_->setSceneData(root_.get());
   view_->addEventHandler(new osgViewer::StatsHandler);
 
-  osg::ref_ptr<osgGA::TrackballManipulator> manipulator{
-    this->createManipulator() };
-  view_->setCameraManipulator(manipulator);
+  //osg::ref_ptr<osgGA::TrackballManipulator> manipulator{
+    //this->createManipulator() };
+  //view_->setCameraManipulator(manipulator);
 
   osg::ref_ptr<osg::Geometry> floor{ this->createFloor() };
   root_->addChild(floor);
-
 
   viewer_->addView(view_);
   viewer_->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
@@ -76,6 +76,7 @@ void OSGWidget::displayRobot(Robot *robot)
 {
   robot_ptr_ = robot;
 
+  // TODO clean me up
   osg::ref_ptr<osg::PositionAttitudeTransform> transform{
     new osg::PositionAttitudeTransform };
 
@@ -87,6 +88,11 @@ void OSGWidget::displayRobot(Robot *robot)
   transform->addChild(robotNode);
 
   root_->addChild(transform);
+
+  osg::ref_ptr<osgGA::NodeTrackerManipulator> manipulator{
+    new osgGA::NodeTrackerManipulator };
+  manipulator->setTrackNode(robotNode);
+  view_->setCameraManipulator(manipulator);
 }
 
 void OSGWidget::paintEvent(QPaintEvent *)
@@ -293,19 +299,18 @@ osg::Camera* OSGWidget::createCamera()
   return camera;
 }
 
+//osgGA::TrackballManipulator *OSGWidget::createManipulator()
+//{
+  //osgGA::TrackballManipulator *manipulator{ new osgGA::TrackballManipulator };
+  //manipulator->setAllowThrow(false);
 
-osgGA::TrackballManipulator *OSGWidget::createManipulator()
-{
-  osgGA::TrackballManipulator *manipulator{ new osgGA::TrackballManipulator };
-  manipulator->setAllowThrow(false);
-
-  osg::Vec3 home_eye_position{ 0.f, -20.f, 3.f };
-  osg::Vec3 home_center_position{ 0.f, 0.f, 0.f };
-  osg::Vec3 home_up_direction_vector{ 0.f, 0.f, 1.f };
-  manipulator->setHomePosition(home_eye_position, home_center_position,
-                               home_up_direction_vector);
-  return manipulator;
-}
+  //osg::Vec3 home_eye_position{ 0.f, -20.f, 3.f };
+  //osg::Vec3 home_center_position{ 0.f, 0.f, 0.f };
+  //osg::Vec3 home_up_direction_vector{ 0.f, 0.f, 1.f };
+  //manipulator->setHomePosition(home_eye_position, home_center_position,
+                               //home_up_direction_vector);
+  //return manipulator;
+//}
 
 osg::Node *OSGWidget::createRobot()
 {
@@ -339,15 +344,15 @@ osg::Geometry *OSGWidget::createFloor()
   normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
   normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
 
-  tex_coords->push_back( osg::Vec2(0.0f, 0.0f) );
-  tex_coords->push_back( osg::Vec2(0.0f, 10.0f) );
-  tex_coords->push_back( osg::Vec2(10.0f, 10.0f) );
-  tex_coords->push_back( osg::Vec2(10.0f, 0.0f) );
+  tex_coords->push_back(osg::Vec2(0.0f, 0.0f));
+  tex_coords->push_back(osg::Vec2(0.0f, 10.0f));
+  tex_coords->push_back(osg::Vec2(10.0f, 10.0f));
+  tex_coords->push_back(osg::Vec2(10.0f, 0.0f));
 
   osg::Geometry *geom{ new osg::Geometry };
   geom->setVertexArray(vertices);
   geom->setNormalArray(normals, osg::Array::Binding::BIND_PER_VERTEX);
-  geom->addPrimitiveSet( new osg::DrawArrays(GL_QUADS, 0, 4));
+  geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
   geom->setTexCoordArray(0, tex_coords.get());
   osgUtil::SmoothingVisitor::smooth(*geom);
 
@@ -355,8 +360,7 @@ osg::Geometry *OSGWidget::createFloor()
                          osg::Array::Binding::BIND_PER_VERTEX);
 
   osg::ref_ptr<osg::Texture2D> texture{ new osg::Texture2D };
-  osg::ref_ptr<osg::Image> image{ osgDB::readImageFile(
-      "../meshes/tile.jpg") };
+  osg::ref_ptr<osg::Image> image{ osgDB::readImageFile("../meshes/tile.jpg") };
   texture->setImage(image);
   texture->setUnRefImageDataAfterApply(true);
   texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
