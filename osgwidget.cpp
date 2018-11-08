@@ -88,7 +88,15 @@ void OSGWidget::displayRobot(Robot *robot)
     new RobotUpdateCallback(robot_ptr_) };
   transform->setUpdateCallback(robotUpdateCallbackPtr);
 
-  osg::ref_ptr<osg::Node> robotNode{ this-> createRobot() };
+  //osg::ref_ptr<osg::Node> robotNode{ this-> createRobot() };
+  //transform->addChild(robotNode);
+
+  osg::ref_ptr<osg::Node> robotNode{ create_ironman(10.0)};
+  osg::StateSet *geom_state_set = robotNode->getOrCreateStateSet();
+  //geom_state_set->setTextureAttributeAndModes(0, texture.get(),
+                                              //osg::StateAttribute::ON);
+  geom_state_set->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+  geom_state_set->setMode( GL_BLEND, osg::StateAttribute::ON ); 
   transform->addChild(robotNode);
 
   root_->addChild(transform);
@@ -353,10 +361,10 @@ osg::Geometry *OSGWidget::createFloor()
   osg::ref_ptr<osg::Vec2Array> tex_coords{ new osg::Vec2Array };
   osg::ref_ptr<osg::Vec3Array> normals{ new osg::Vec3Array };
 
-  vertices->push_back(osg::Vec3(-100.0f, -100.0f, -0.01f));
-  vertices->push_back(osg::Vec3(-100.0f, 100.0f, -0.01f));
-  vertices->push_back(osg::Vec3(100.0f, 100.0f, -0.01f));
-  vertices->push_back(osg::Vec3(100.0f, -100.0f, -0.01f));
+  vertices->push_back(osg::Vec3(-100.0f, -100.0f, -10.01f));
+  vertices->push_back(osg::Vec3(-100.0f, 100.0f, -10.01f));
+  vertices->push_back(osg::Vec3(100.0f, 100.0f, -10.01f));
+  vertices->push_back(osg::Vec3(100.0f, -100.0f, -10.01f));
 
   normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
   normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
@@ -388,6 +396,8 @@ osg::Geometry *OSGWidget::createFloor()
   osg::StateSet *geom_state_set = geom->getOrCreateStateSet();
   geom_state_set->setTextureAttributeAndModes(0, texture.get(),
                                               osg::StateAttribute::ON);
+  //geom_state_set->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+  geom_state_set->setMode( GL_BLEND, osg::StateAttribute::ON ); 
 
   return geom;
 }
@@ -397,6 +407,6 @@ void OSGWidget::setupViewCamera()
   view_->setLightingMode(osg::View::SKY_LIGHT);
 
   osg::Light *light{ view_->getLight() };
-  osg::Vec4 light_pos{ 0.f, 0.f, -1.f, 0.f };
+  osg::Vec4 light_pos{ 0.f, 0.f, 100.f, 0.f };
   light->setPosition(light_pos);
 }
