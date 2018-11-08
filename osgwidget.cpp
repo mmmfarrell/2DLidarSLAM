@@ -29,6 +29,7 @@
 #include <stdexcept>
 #include <vector>
 #include <iostream> // TODO remove
+#include "ironman.h" // TODO remove
 
 #include <QKeyEvent>
 #include <QPainter>
@@ -54,6 +55,9 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
 
   osg::ref_ptr<osg::Geometry> floor{ this->createFloor() };
   root_->addChild(floor);
+
+  //osg::ref_ptr<osg::Node> ironman{ create_ironman(100.0)};
+  //root_->addChild(ironman);
 
   viewer_->addView(view_);
   viewer_->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
@@ -89,9 +93,24 @@ void OSGWidget::displayRobot(Robot *robot)
 
   root_->addChild(transform);
 
+  // tracker manipulator code
+  osgGA::NodeTrackerManipulator::TrackerMode trackerMode =
+      osgGA::NodeTrackerManipulator::NODE_CENTER_AND_AZIM;
+  osgGA::NodeTrackerManipulator::RotationMode rotationMode =
+      osgGA::NodeTrackerManipulator::ELEVATION_AZIM;
+
   osg::ref_ptr<osgGA::NodeTrackerManipulator> manipulator{
     new osgGA::NodeTrackerManipulator };
-  manipulator->setTrackNode(robotNode);
+
+  osg::Vec3 home_eye_position{ -10.f, 10.f, 7.f };
+  osg::Vec3 home_center_position{ 0.f, 0.f, 0.f };
+  osg::Vec3 home_up_direction_vector{ 0.f, 0.f, 1.f };
+  manipulator->setHomePosition(home_eye_position, home_center_position,
+                               home_up_direction_vector);
+
+  manipulator->setTrackerMode(trackerMode);
+  manipulator->setRotationMode(rotationMode);
+  manipulator->setTrackNode(robotNode.get());
   view_->setCameraManipulator(manipulator);
 }
 
