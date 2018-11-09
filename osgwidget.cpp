@@ -60,7 +60,7 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
   osg::ref_ptr<osg::PositionAttitudeTransform> maze_transform{
     new osg::PositionAttitudeTransform };
   maze_transform->addChild(maze);
-  osg::Vec3d maze_translation{ 0., 0., 4. };
+  osg::Vec3d maze_translation{ 30., 5., 4. };
   maze_transform->setPosition(maze_translation);
   root_->addChild(maze_transform);
 
@@ -101,18 +101,25 @@ void OSGWidget::displayRobot(Robot *robot)
 
   osg::Vec3d robot_translation{ 0., 0., 0. };
   transform->setPosition(robot_translation);
+
+  osg::Matrixd robot_rotation_mat;
+  robot_rotation_mat.makeRotate(osg::DegreesToRadians(35.), osg::Vec3(0, 0, 1));
+
+  osg::Quat robot_rotation_quat{ robot_rotation_mat.getRotate() };
+  transform->setAttitude(robot_rotation_quat);
+
   root_->addChild(robot_transform);
 
   // tracker manipulator code
   osgGA::NodeTrackerManipulator::TrackerMode trackerMode =
-      osgGA::NodeTrackerManipulator::NODE_CENTER_AND_AZIM;
+      osgGA::NodeTrackerManipulator::NODE_CENTER;
   osgGA::NodeTrackerManipulator::RotationMode rotationMode =
       osgGA::NodeTrackerManipulator::ELEVATION_AZIM;
 
   osg::ref_ptr<osgGA::NodeTrackerManipulator> manipulator{
     new osgGA::NodeTrackerManipulator };
 
-  osg::Vec3 home_eye_position{ -10.f, 10.f, 7.f };
+  osg::Vec3 home_eye_position{ -30.f, 0.f, 30.f };
   osg::Vec3 home_center_position{ 0.f, 0.f, 0.f };
   osg::Vec3 home_up_direction_vector{ 0.f, 0.f, 1.f };
   manipulator->setHomePosition(home_eye_position, home_center_position,
