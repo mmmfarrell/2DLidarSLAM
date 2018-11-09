@@ -1,5 +1,6 @@
 #include "osgwidget.h"
 #include "robotupdatecallback.h"
+#include "models.h"
 
 #include <osg/ref_ptr>
 #include <osg/Group>
@@ -14,7 +15,6 @@
 #include <osg/StateAttribute>
 #include <osg/Vec3>
 #include <osg/Vec4>
-//#include <osgGA/TrackballManipulator>
 #include <osgGA/NodeTrackerManipulator>
 #include <osgGA/EventQueue>
 #include <osgGA/GUIEventAdapter>
@@ -28,8 +28,6 @@
 
 #include <stdexcept>
 #include <vector>
-#include <iostream> // TODO remove
-#include "models.h" // TODO remove
 
 #include <QKeyEvent>
 #include <QPainter>
@@ -49,20 +47,8 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
   view_->setSceneData(root_.get());
   view_->addEventHandler(new osgViewer::StatsHandler);
 
-  //osg::ref_ptr<osgGA::TrackballManipulator> manipulator{
-    //this->createManipulator() };
-  //view_->setCameraManipulator(manipulator);
-
-  //osg::ref_ptr<osg::Geometry> floor{ this->createFloor() };
-  //root_->addChild(floor);
-
   osg::ref_ptr<osg::Node> maze{ create_maze()};
-  osg::ref_ptr<osg::PositionAttitudeTransform> maze_transform{
-    new osg::PositionAttitudeTransform };
-  maze_transform->addChild(maze);
-  osg::Vec3d maze_translation{ 30., 5., 4. };
-  maze_transform->setPosition(maze_translation);
-  root_->addChild(maze_transform);
+  root_->addChild(maze);
 
   viewer_->addView(view_);
   viewer_->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
@@ -85,50 +71,17 @@ void OSGWidget::displayRobot(Robot *robot)
 {
   robot_ptr_ = robot;
 
-  // TODO clean me up
   osg::ref_ptr<osg::PositionAttitudeTransform> robot_transform{
     new osg::PositionAttitudeTransform };
   osg::ref_ptr<RobotUpdateCallback> robotUpdateCallbackPtr{
     new RobotUpdateCallback(robot_ptr_) };
   robot_transform->setUpdateCallback(robotUpdateCallbackPtr);
 
-  osg::ref_ptr<osg::PositionAttitudeTransform> transform{
-    new osg::PositionAttitudeTransform };
-  robot_transform->addChild(transform);
-
-  osg::ref_ptr<osg::Node> robotNode{ create_robot()};
-  transform->addChild(robotNode);
-
-  osg::Vec3d robot_translation{ 0., 0., 0. };
-  transform->setPosition(robot_translation);
-
-  osg::Matrixd robot_rotation_mat;
-  robot_rotation_mat.makeRotate(osg::DegreesToRadians(35.), osg::Vec3(0, 0, 1));
-
-  osg::Quat robot_rotation_quat{ robot_rotation_mat.getRotate() };
-  transform->setAttitude(robot_rotation_quat);
-
+  osg::ref_ptr<osg::Node> robot_node{ create_robot()};
+  robot_transform->addChild(robot_node);
   root_->addChild(robot_transform);
 
-  // tracker manipulator code
-  osgGA::NodeTrackerManipulator::TrackerMode trackerMode =
-      osgGA::NodeTrackerManipulator::NODE_CENTER;
-  osgGA::NodeTrackerManipulator::RotationMode rotationMode =
-      osgGA::NodeTrackerManipulator::ELEVATION_AZIM;
-
-  osg::ref_ptr<osgGA::NodeTrackerManipulator> manipulator{
-    new osgGA::NodeTrackerManipulator };
-
-  osg::Vec3 home_eye_position{ -30.f, 0.f, 30.f };
-  osg::Vec3 home_center_position{ 0.f, 0.f, 0.f };
-  osg::Vec3 home_up_direction_vector{ 0.f, 0.f, 1.f };
-  manipulator->setHomePosition(home_eye_position, home_center_position,
-                               home_up_direction_vector);
-
-  manipulator->setTrackerMode(trackerMode);
-  manipulator->setRotationMode(rotationMode);
-  manipulator->setTrackNode(robotNode.get());
-  view_->setCameraManipulator(manipulator);
+  this->setCameraToTrackNode(robot_node.get());
 }
 
 void OSGWidget::paintEvent(QPaintEvent *)
@@ -335,22 +288,6 @@ osg::Camera* OSGWidget::createCamera()
   return camera;
 }
 
-osg::Node *OSGWidget::createRobot()
-{
-  std::string robot_mesh_file{ "../meshes/robot.stl" };
-  osg::Node* robot_node{ osgDB::readNodeFile(robot_mesh_file)};
-
-  osg::ref_ptr<osg::Material> material{ new osg::Material };
-  material->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
-  osg::Vec4 black_color_rgba{ 0.f, 0.f, 0.f, 1.f };
-  material->setDiffuse(osg::Material::FRONT_AND_BACK, black_color_rgba);
-
-  osg::StateSet *stateSet{ robot_node->getOrCreateStateSet() };
-  stateSet->setAttributeAndModes(material, osg::StateAttribute::ON);
-  stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-  return robot_node;
-}
-
 void OSGWidget::setupViewCamera()
 {
   view_->setLightingMode(osg::View::SKY_LIGHT);
@@ -358,4 +295,26 @@ void OSGWidget::setupViewCamera()
   osg::Light *light{ view_->getLight() };
   osg::Vec4 light_pos{ 0.f, 0.f, 100.f, 0.f };
   light->setPosition(light_pos);
+}
+
+void OSGWidget::setCameraToTrackNode(osg::Node* node_to_track)
+{
+  osgGA::NodeTrackerManipulator::TrackerMode trackerMode =
+      osgGA::NodeTrackerManipulator::NODE_CENTER;
+  osgGA::NodeTrackerManipulator::RotationMode rotationMode =
+      osgGA::NodeTrackerManipulator::ELEVATION_AZIM;
+
+  osg::ref_ptr<osgGA::NodeTrackerManipulator> manipulator{
+    new osgGA::NodeTrackerManipulator };
+
+  osg::Vec3 home_eye_position{ -30.f, 0.f, 30.f };
+  osg::Vec3 home_center_position{ 0.f, 0.f, 0.f };
+  osg::Vec3 home_up_direction_vector{ 0.f, 0.f, 1.f };
+  manipulator->setHomePosition(home_eye_position, home_center_position,
+                               home_up_direction_vector);
+
+  manipulator->setTrackerMode(trackerMode);
+  manipulator->setRotationMode(rotationMode);
+  manipulator->setTrackNode(node_to_track);
+  view_->setCameraManipulator(manipulator);
 }

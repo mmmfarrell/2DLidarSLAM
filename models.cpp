@@ -58,30 +58,53 @@ osg::ref_ptr<osg::Node> create_model(std::string file_name)
 
 osg::ref_ptr<osg::Node> create_robot()
 {
-  // TODO catch failed load
   std::string robot_file{ "/home/mmmfarrell/Downloads/r2d22.3ds" };
   double robot_bound_radius{ 3. };
 
   osg::ref_ptr<osg::Node> model = create_model(robot_file);
+  if (!model)
+    throw std::runtime_error("Unable to load robot mesh");
+
   osg::ref_ptr<osg::Node> scaled_model =
       create_scaled_model(model, robot_bound_radius);
   osg::ref_ptr<osg::Node> model_at_origin =
       translate_model_to_origin(scaled_model);
 
-  return model_at_origin.release();
+  osg::ref_ptr<osg::PositionAttitudeTransform> transform{
+    new osg::PositionAttitudeTransform };
+  transform->addChild(model_at_origin);
+
+  osg::Vec3d robot_translation{ 0., 0., 0. };
+  transform->setPosition(robot_translation);
+
+  osg::Matrixd robot_rotation_mat;
+  robot_rotation_mat.makeRotate(osg::DegreesToRadians(35.), osg::Vec3(0, 0, 1));
+  osg::Quat robot_rotation_quat{ robot_rotation_mat.getRotate() };
+  transform->setAttitude(robot_rotation_quat);
+
+  //return model_at_origin.release();
+  return transform.release();
 }
 
 osg::ref_ptr<osg::Node> create_maze()
 {
-  // TODO catch failed load
   std::string maze_file{ "/home/mmmfarrell/Downloads/Maze.3ds" };
   double maze_bound_radius{ 50. };
 
   osg::ref_ptr<osg::Node> model = create_model(maze_file);
+  if (!model)
+    throw std::runtime_error("Unable to load maze mesh");
+
   osg::ref_ptr<osg::Node> scaled_model =
       create_scaled_model(model, maze_bound_radius);
   osg::ref_ptr<osg::Node> translated_model =
       translate_model_to_origin(scaled_model);
 
-  return translated_model.release();
+  osg::ref_ptr<osg::PositionAttitudeTransform> maze_transform{
+    new osg::PositionAttitudeTransform };
+  maze_transform->addChild(translated_model);
+  osg::Vec3d maze_translation{ 30., 5., 4. };
+  maze_transform->setPosition(maze_translation);
+
+  return maze_transform.release();
 }
