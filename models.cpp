@@ -21,7 +21,7 @@ osg::ref_ptr<osg::Node> create_scaled_model(osg::ref_ptr<osg::Node> model,
   return scale_trans.release();
 }
 
-osg::ref_ptr<osg::Node> create_translated_model(osg::ref_ptr<osg::Node> model)
+osg::ref_ptr<osg::Node> translate_model_to_origin(osg::ref_ptr<osg::Node> model)
 {
   osg::BoundingSphere bb{ model->getBound() };
 
@@ -34,26 +34,20 @@ osg::ref_ptr<osg::Node> create_translated_model(osg::ref_ptr<osg::Node> model)
   return position_trans.release();
 }
 
+osg::ref_ptr<osg::Node> translate_model(osg::ref_ptr<osg::Node> model, osg::Vec3d &translation)
+{
+  osg::ref_ptr<osg::PositionAttitudeTransform> position_trans{
+    new osg::PositionAttitudeTransform };
+  //osg::Vec3d pos{  };
+  //pos = osg::Vec3d(pos.x() * -1, pos.y() * -1, pos.z() * -1);
+  position_trans->setPosition(translation);
+  position_trans->addChild(model);
+  return position_trans.release();
+}
+
 osg::ref_ptr<osg::Node> create_model(std::string file_name)
 {
   osg::ref_ptr<osg::Node> model = osgDB::readNodeFile(file_name);
-  // osg::ref_ptr<osg::Node> model =
-  // osgDB::readNodeFile("../meshes/robot/lost_robot.ive");
-  // osg::ref_ptr<osg::Node> model =
-  // osgDB::readNodeFile("/home/mmmfarrell/Downloads/turtlebot.dae");
-   //osg::ref_ptr<osg::Node> model =
-   //osgDB::readNodeFile("/home/mmmfarrell/Downloads/bb8/bb8.3ds");
-  // osg::ref_ptr<osg::Node> model =
-  // osgDB::readNodeFile("/home/mmmfarrell/Downloads/car.3ds");
-  // osg::ref_ptr<osg::Node> model =
-  // osgDB::readNodeFile("/home/mmmfarrell/Downloads/tread.3ds"); // works well
-  // osg::ref_ptr<osg::Node> model =
-  // osgDB::readNodeFile("/home/mmmfarrell/Downloads/irobot.3ds"); // works
-  // osg::ref_ptr<osg::Node> model =
-  // osgDB::readNodeFile("/home/mmmfarrell/Downloads/r2d22.3ds"); // workd not
-  // as pretty
-  // osg::ref_ptr<osg::Node> model =
-  // osgDB::readNodeFile("/home/mmmfarrell/Downloads/r2d2.3ds"); // works
 
   if (model.valid())
   {
@@ -64,14 +58,26 @@ osg::ref_ptr<osg::Node> create_model(std::string file_name)
   return model.release();
 }
 
-osg::ref_ptr<osg::Node> create_ironman(double boundingRadius)
+osg::ref_ptr<osg::Node> create_robot()
 {
-    //osg::ref_ptr<osg::Node> model = osgDB::readNodeFile("/home/mmmfarrell/Downloads/Maze.3ds");
-    osg::ref_ptr<osg::Node> model = create_model();
-    osg::ref_ptr<osg::Node> scaledModel = create_scaled_model(model,boundingRadius);
-    osg::ref_ptr<osg::Node> translatedModel = create_translated_model(scaledModel);
+  // TODO catch failed load
+  std::string robot_file{ "/home/mmmfarrell/Downloads/r2d22.3ds" };
+  //std::string robot_file{ "/home/mmmfarrell/Downloads/tread.3ds" };
+  //std::string robot_file{ "/home/mmmfarrell/Downloads/irobot.3ds" };
+  double robot_bound_radius{ 1. };
 
-    return translatedModel.release();
+  osg::ref_ptr<osg::Node> model = create_model(robot_file);
+  osg::ref_ptr<osg::Node> scaled_model =
+      create_scaled_model(model, robot_bound_radius);
+  osg::ref_ptr<osg::Node> model_at_origin =
+      translate_model_to_origin(scaled_model);
+
+  //osg::Vec3d robot_translation{ 0., 0., 100. };
+  //osg::ref_ptr<osg::Node> translated_model =
+      //translate_model(model_at_origin, robot_translation);
+
+  //return translated_model.release();
+  return model_at_origin.release();
 }
 
 osg::ref_ptr<osg::Node> create_maze()
@@ -84,7 +90,7 @@ osg::ref_ptr<osg::Node> create_maze()
   osg::ref_ptr<osg::Node> scaled_model =
       create_scaled_model(model, maze_bound_radius);
   osg::ref_ptr<osg::Node> translated_model =
-      create_translated_model(scaled_model);
+      translate_model_to_origin(scaled_model);
 
   return translated_model.release();
 }

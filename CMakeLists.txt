@@ -34,7 +34,7 @@ SET(MYSOURCE
     osgwidget.cpp
     robot.cpp # TODO move to library?
     robotupdatecallback.cpp
-    ironman.cpp
+    models.cpp
     )
 
 add_executable(${PROJECT_NAME}

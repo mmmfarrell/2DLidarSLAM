@@ -29,7 +29,7 @@
 #include <stdexcept>
 #include <vector>
 #include <iostream> // TODO remove
-#include "ironman.h" // TODO remove
+#include "models.h" // TODO remove
 
 #include <QKeyEvent>
 #include <QPainter>
@@ -56,8 +56,8 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
   //osg::ref_ptr<osg::Geometry> floor{ this->createFloor() };
   //root_->addChild(floor);
 
-  //osg::ref_ptr<osg::Node> ironman{ create_ironman(100.0)};
-  //root_->addChild(ironman);
+  osg::ref_ptr<osg::Node> maze{ create_maze()};
+  root_->addChild(maze);
 
   viewer_->addView(view_);
   viewer_->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
@@ -81,25 +81,37 @@ void OSGWidget::displayRobot(Robot *robot)
   robot_ptr_ = robot;
 
   // TODO clean me up
-  osg::ref_ptr<osg::PositionAttitudeTransform> transform{
+  osg::ref_ptr<osg::PositionAttitudeTransform> robot_transform{
     new osg::PositionAttitudeTransform };
-
   osg::ref_ptr<RobotUpdateCallback> robotUpdateCallbackPtr{
     new RobotUpdateCallback(robot_ptr_) };
-  transform->setUpdateCallback(robotUpdateCallbackPtr);
+  robot_transform->setUpdateCallback(robotUpdateCallbackPtr);
+
+  osg::ref_ptr<osg::PositionAttitudeTransform> transform{
+    new osg::PositionAttitudeTransform };
+  robot_transform->addChild(transform);
+
+  //osg::ref_ptr<RobotUpdateCallback> robotUpdateCallbackPtr{
+    //new RobotUpdateCallback(robot_ptr_) };
+  //transform->setUpdateCallback(robotUpdateCallbackPtr);
 
   //osg::ref_ptr<osg::Node> robotNode{ this-> createRobot() };
   //transform->addChild(robotNode);
 
-  osg::ref_ptr<osg::Node> robotNode{ create_ironman(10.0)};
+  osg::ref_ptr<osg::Node> robotNode{ create_robot()};
   osg::StateSet *geom_state_set = robotNode->getOrCreateStateSet();
   //geom_state_set->setTextureAttributeAndModes(0, texture.get(),
                                               //osg::StateAttribute::ON);
-  geom_state_set->setRenderingHint(osg::StateSet::OPAQUE_BIN);
-  geom_state_set->setMode( GL_BLEND, osg::StateAttribute::ON ); 
+  //geom_state_set->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+  //geom_state_set->setMode( GL_BLEND, osg::StateAttribute::ON ); 
   transform->addChild(robotNode);
 
-  root_->addChild(transform);
+  osg::Vec3d robot_translation{ 0., 0., 100. };
+  transform->setPosition(robot_translation);
+  //osg::ref_ptr<osg::Node> translated_model =
+      //translate_model(transform, robot_translation);
+
+  root_->addChild(robot_transform);
 
   // tracker manipulator code
   osgGA::NodeTrackerManipulator::TrackerMode trackerMode =
