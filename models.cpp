@@ -38,8 +38,6 @@ osg::ref_ptr<osg::Node> translate_model(osg::ref_ptr<osg::Node> model, osg::Vec3
 {
   osg::ref_ptr<osg::PositionAttitudeTransform> position_trans{
     new osg::PositionAttitudeTransform };
-  //osg::Vec3d pos{  };
-  //pos = osg::Vec3d(pos.x() * -1, pos.y() * -1, pos.z() * -1);
   position_trans->setPosition(translation);
   position_trans->addChild(model);
   return position_trans.release();
@@ -62,9 +60,7 @@ osg::ref_ptr<osg::Node> create_robot()
 {
   // TODO catch failed load
   std::string robot_file{ "/home/mmmfarrell/Downloads/r2d22.3ds" };
-  //std::string robot_file{ "/home/mmmfarrell/Downloads/tread.3ds" };
-  //std::string robot_file{ "/home/mmmfarrell/Downloads/irobot.3ds" };
-  double robot_bound_radius{ 1. };
+  double robot_bound_radius{ 3. };
 
   osg::ref_ptr<osg::Node> model = create_model(robot_file);
   osg::ref_ptr<osg::Node> scaled_model =
@@ -72,11 +68,6 @@ osg::ref_ptr<osg::Node> create_robot()
   osg::ref_ptr<osg::Node> model_at_origin =
       translate_model_to_origin(scaled_model);
 
-  //osg::Vec3d robot_translation{ 0., 0., 100. };
-  //osg::ref_ptr<osg::Node> translated_model =
-      //translate_model(model_at_origin, robot_translation);
-
-  //return translated_model.release();
   return model_at_origin.release();
 }
 

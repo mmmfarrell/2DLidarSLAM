@@ -57,7 +57,12 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
   //root_->addChild(floor);
 
   osg::ref_ptr<osg::Node> maze{ create_maze()};
-  root_->addChild(maze);
+  osg::ref_ptr<osg::PositionAttitudeTransform> maze_transform{
+    new osg::PositionAttitudeTransform };
+  maze_transform->addChild(maze);
+  osg::Vec3d maze_translation{ 0., 0., 4. };
+  maze_transform->setPosition(maze_translation);
+  root_->addChild(maze_transform);
 
   viewer_->addView(view_);
   viewer_->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
@@ -91,26 +96,11 @@ void OSGWidget::displayRobot(Robot *robot)
     new osg::PositionAttitudeTransform };
   robot_transform->addChild(transform);
 
-  //osg::ref_ptr<RobotUpdateCallback> robotUpdateCallbackPtr{
-    //new RobotUpdateCallback(robot_ptr_) };
-  //transform->setUpdateCallback(robotUpdateCallbackPtr);
-
-  //osg::ref_ptr<osg::Node> robotNode{ this-> createRobot() };
-  //transform->addChild(robotNode);
-
   osg::ref_ptr<osg::Node> robotNode{ create_robot()};
-  osg::StateSet *geom_state_set = robotNode->getOrCreateStateSet();
-  //geom_state_set->setTextureAttributeAndModes(0, texture.get(),
-                                              //osg::StateAttribute::ON);
-  //geom_state_set->setRenderingHint(osg::StateSet::OPAQUE_BIN);
-  //geom_state_set->setMode( GL_BLEND, osg::StateAttribute::ON ); 
   transform->addChild(robotNode);
 
-  osg::Vec3d robot_translation{ 0., 0., 100. };
+  osg::Vec3d robot_translation{ 0., 0., 0. };
   transform->setPosition(robot_translation);
-  //osg::ref_ptr<osg::Node> translated_model =
-      //translate_model(transform, robot_translation);
-
   root_->addChild(robot_transform);
 
   // tracker manipulator code
