@@ -44,7 +44,6 @@ protected:
   virtual void resizeGL(int width, int height);
 
   virtual void keyPressEvent(QKeyEvent *event);
-  //virtual void keyReleaseEvent(QKeyEvent *event);
 
   virtual void mouseMoveEvent(QMouseEvent *event);
   virtual void mousePressEvent(QMouseEvent *event);
@@ -59,8 +58,6 @@ protected:
   unsigned int getMouseButtonNumber(QMouseEvent *event);
 
   osg::Camera* createCamera();
-  osg::Node* createRobot();
-  osg::Geometry* createFloor();
 
   void setupViewCamera();
   void setCameraToTrackNode(osg::Node* node_to_track);

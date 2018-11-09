@@ -127,15 +127,6 @@ void OSGWidget::keyPressEvent(QKeyEvent *event)
   QOpenGLWidget::keyPressEvent(event);
 }
 
-//void OSGWidget::keyReleaseEvent(QKeyEvent *event)
-//{
-  //QString key_string{ event->text() };
-  //const char *key_data{ key_string.toLocal8Bit().data() };
-
-  //this->getEventQueue()->keyRelease(
-      //osgGA::GUIEventAdapter::KeySymbol(*key_data));
-//}
-
 void OSGWidget::mouseMoveEvent(QMouseEvent *event)
 {
   auto pixel_ratio{ this->devicePixelRatio() };
