@@ -45,7 +45,7 @@ osg::ref_ptr<osg::Node> translate_model(osg::ref_ptr<osg::Node> model, osg::Vec3
 
 osg::ref_ptr<osg::Node> create_model(std::string file_name)
 {
-  osg::ref_ptr<osg::Node> model = osgDB::readNodeFile(file_name);
+  osg::ref_ptr<osg::Node> model{ osgDB::readNodeFile(file_name) };
 
   if (model.valid())
   {
@@ -61,14 +61,14 @@ osg::ref_ptr<osg::Node> create_robot()
   std::string robot_file{ "/home/mmmfarrell/Downloads/r2d22.3ds" };
   double robot_bound_radius{ 3. };
 
-  osg::ref_ptr<osg::Node> model = create_model(robot_file);
+  osg::ref_ptr<osg::Node> model{ create_model(robot_file) };
   if (!model)
     throw std::runtime_error("Unable to load robot mesh");
 
-  osg::ref_ptr<osg::Node> scaled_model =
-      create_scaled_model(model, robot_bound_radius);
-  osg::ref_ptr<osg::Node> model_at_origin =
-      translate_model_to_origin(scaled_model);
+  osg::ref_ptr<osg::Node> scaled_model{ create_scaled_model(
+      model, robot_bound_radius) };
+  osg::ref_ptr<osg::Node> model_at_origin{ translate_model_to_origin(
+      scaled_model) };
 
   osg::ref_ptr<osg::PositionAttitudeTransform> transform{
     new osg::PositionAttitudeTransform };
@@ -82,7 +82,6 @@ osg::ref_ptr<osg::Node> create_robot()
   osg::Quat robot_rotation_quat{ robot_rotation_mat.getRotate() };
   transform->setAttitude(robot_rotation_quat);
 
-  //return model_at_origin.release();
   return transform.release();
 }
 
@@ -91,14 +90,14 @@ osg::ref_ptr<osg::Node> create_maze()
   std::string maze_file{ "/home/mmmfarrell/Downloads/Maze.3ds" };
   double maze_bound_radius{ 50. };
 
-  osg::ref_ptr<osg::Node> model = create_model(maze_file);
+  osg::ref_ptr<osg::Node> model{ create_model(maze_file) };
   if (!model)
     throw std::runtime_error("Unable to load maze mesh");
 
-  osg::ref_ptr<osg::Node> scaled_model =
-      create_scaled_model(model, maze_bound_radius);
-  osg::ref_ptr<osg::Node> translated_model =
-      translate_model_to_origin(scaled_model);
+  osg::ref_ptr<osg::Node> scaled_model{ create_scaled_model(
+      model, maze_bound_radius) };
+  osg::ref_ptr<osg::Node> translated_model{ translate_model_to_origin(
+      scaled_model) };
 
   osg::ref_ptr<osg::PositionAttitudeTransform> maze_transform{
     new osg::PositionAttitudeTransform };

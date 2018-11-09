@@ -47,7 +47,7 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
   view_->setSceneData(root_.get());
   view_->addEventHandler(new osgViewer::StatsHandler);
 
-  osg::ref_ptr<osg::Node> maze{ create_maze()};
+  osg::ref_ptr<osg::Node> maze{ create_maze() };
   root_->addChild(maze);
 
   viewer_->addView(view_);
