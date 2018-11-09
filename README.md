@@ -15,6 +15,10 @@ TurtleBot. The commands given by the user (keyboard or Xbox controller) will be
 velocity commands (forward/backward and rotation) that the robot tries to
 achieve with a basic PID controller and first order motor dynamics.
 
+Robot dynamics, kinematics and control based on "Control of Unicycle Type
+Robots" by R. Carona, et. al.
+[pdf](http://vislab.isr.ist.utl.pt/publications/08-jetc-rcarona-vcontrol.pdf)
+
 ## Sprint #1
 Planned Stories:
 - As a user I want to see a robot model (.stl) displayed on the screen.
