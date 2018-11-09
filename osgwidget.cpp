@@ -53,8 +53,8 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
     //this->createManipulator() };
   //view_->setCameraManipulator(manipulator);
 
-  osg::ref_ptr<osg::Geometry> floor{ this->createFloor() };
-  root_->addChild(floor);
+  //osg::ref_ptr<osg::Geometry> floor{ this->createFloor() };
+  //root_->addChild(floor);
 
   //osg::ref_ptr<osg::Node> ironman{ create_ironman(100.0)};
   //root_->addChild(ironman);
@@ -326,19 +326,6 @@ osg::Camera* OSGWidget::createCamera()
   return camera;
 }
 
-//osgGA::TrackballManipulator *OSGWidget::createManipulator()
-//{
-  //osgGA::TrackballManipulator *manipulator{ new osgGA::TrackballManipulator };
-  //manipulator->setAllowThrow(false);
-
-  //osg::Vec3 home_eye_position{ 0.f, -20.f, 3.f };
-  //osg::Vec3 home_center_position{ 0.f, 0.f, 0.f };
-  //osg::Vec3 home_up_direction_vector{ 0.f, 0.f, 1.f };
-  //manipulator->setHomePosition(home_eye_position, home_center_position,
-                               //home_up_direction_vector);
-  //return manipulator;
-//}
-
 osg::Node *OSGWidget::createRobot()
 {
   std::string robot_mesh_file{ "../meshes/robot.stl" };
@@ -353,53 +340,6 @@ osg::Node *OSGWidget::createRobot()
   stateSet->setAttributeAndModes(material, osg::StateAttribute::ON);
   stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
   return robot_node;
-}
-
-osg::Geometry *OSGWidget::createFloor()
-{
-  osg::ref_ptr<osg::Vec3Array> vertices{ new osg::Vec3Array };
-  osg::ref_ptr<osg::Vec2Array> tex_coords{ new osg::Vec2Array };
-  osg::ref_ptr<osg::Vec3Array> normals{ new osg::Vec3Array };
-
-  vertices->push_back(osg::Vec3(-100.0f, -100.0f, -10.01f));
-  vertices->push_back(osg::Vec3(-100.0f, 100.0f, -10.01f));
-  vertices->push_back(osg::Vec3(100.0f, 100.0f, -10.01f));
-  vertices->push_back(osg::Vec3(100.0f, -100.0f, -10.01f));
-
-  normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
-  normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
-  normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
-  normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
-
-  tex_coords->push_back(osg::Vec2(0.0f, 0.0f));
-  tex_coords->push_back(osg::Vec2(0.0f, 10.0f));
-  tex_coords->push_back(osg::Vec2(10.0f, 10.0f));
-  tex_coords->push_back(osg::Vec2(10.0f, 0.0f));
-
-  osg::Geometry *geom{ new osg::Geometry };
-  geom->setVertexArray(vertices);
-  geom->setNormalArray(normals, osg::Array::Binding::BIND_PER_VERTEX);
-  geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
-  geom->setTexCoordArray(0, tex_coords.get());
-  osgUtil::SmoothingVisitor::smooth(*geom);
-
-  geom->setTexCoordArray(0, tex_coords.get(),
-                         osg::Array::Binding::BIND_PER_VERTEX);
-
-  osg::ref_ptr<osg::Texture2D> texture{ new osg::Texture2D };
-  osg::ref_ptr<osg::Image> image{ osgDB::readImageFile("../meshes/tile.jpg") };
-  texture->setImage(image);
-  texture->setUnRefImageDataAfterApply(true);
-  texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
-  texture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
-
-  osg::StateSet *geom_state_set = geom->getOrCreateStateSet();
-  geom_state_set->setTextureAttributeAndModes(0, texture.get(),
-                                              osg::StateAttribute::ON);
-  //geom_state_set->setRenderingHint(osg::StateSet::OPAQUE_BIN);
-  geom_state_set->setMode( GL_BLEND, osg::StateAttribute::ON ); 
-
-  return geom;
 }
 
 void OSGWidget::setupViewCamera()
