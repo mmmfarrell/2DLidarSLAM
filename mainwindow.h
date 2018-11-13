@@ -28,6 +28,7 @@ public slots:
   void on_actionExit_triggered();
 
   void keyPressEvent(QKeyEvent *event);
+  void keyReleaseEvent(QKeyEvent *event);
 
 protected:
   Ui::MainWindowForm *main_window_ui_;

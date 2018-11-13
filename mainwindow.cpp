@@ -3,7 +3,6 @@
 #include "osgwidget.h"
 #include "robot.h"
 
-#include <iostream> // TODO remove
 #include <QDockWidget>
 #include <QKeyEvent>
 #include <QTimerEvent>
@@ -39,20 +38,16 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
   switch (event->key())
   {
     case Qt::Key_Up:
-      //robot_->moveForward();
       robot_->setDesiredVelocity(1.0);
       break;
     case Qt::Key_Down:
-      //robot_->moveBackward();
       robot_->setDesiredVelocity(-1.0);
       break;
     case Qt::Key_Right:
-      //robot_->rotateRight();
-      robot_->setDesiredOmega(1.0);
+      robot_->setDesiredOmega(-1.0);
       break;
     case Qt::Key_Left:
-      //robot_->rotateLeft();
-      robot_->setDesiredOmega(-1.0);
+      robot_->setDesiredOmega(1.0);
       break;
     case Qt::Key_Escape:
     case Qt::Key_Q:
@@ -63,11 +58,29 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
   QMainWindow::keyPressEvent(event);
 }
 
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+  switch (event->key())
+  {
+    case Qt::Key_Up:
+      robot_->setDesiredVelocity(0.0);
+      break;
+    case Qt::Key_Down:
+      robot_->setDesiredVelocity(0.0);
+      break;
+    case Qt::Key_Right:
+      robot_->setDesiredOmega(0.0);
+      break;
+    case Qt::Key_Left:
+      robot_->setDesiredOmega(0.0);
+      break;
+  }
+
+  QMainWindow::keyPressEvent(event);
+}
+
 void MainWindow::timerEvent(QTimerEvent *)
 {
   double robot_dynamics_rate_s{ 1. / robot_dynamics_rate_hz_ };
   robot_->propagateDynamics(robot_dynamics_rate_s);
-  std::cout << "robot vel: " << robot_->getVelocity() << std::endl;
-  std::cout << "robot x: " << robot_->getX() << std::endl;
-
 }
