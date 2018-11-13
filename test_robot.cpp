@@ -119,21 +119,40 @@ TEST(ARobotAtRest, propagateDynamics_NewStateStillAtRest)
   EXPECT_STATES_NEAR(trueNewState, robot.getState());
 }
 
-//TEST(ARobotAtRestWithDesiredVelocity, propagateDynamics_NewStateCorrect)
-//{
-  //robo::Robot robot;
-  //double robot_desired_velocity{ 1.0 };
-  //robot.setDesiredVelocity(robot_desired_velocity);
+TEST(ARobotAtRestWithDesiredVelocity, propagateDynamics_NewStateCorrect)
+{
+  robo::Robot robot;
+  double robot_desired_velocity{ 1.0 };
+  robot.setDesiredVelocity(robot_desired_velocity);
 
-  //double time_step{ 0.01 };
-  //robot.propagateDynamics(time_step);
+  double time_step{ 1.0 };
+  robot.propagateDynamics(time_step);
 
-  //Eigen::Matrix<double, 5, 1> trueNewState;
-  //trueNewState.setZero();
+  Eigen::Matrix<double, 5, 1> trueNewState;
+  trueNewState.setZero();
+  double true_new_robot_x{ 0.66667 };
+  trueNewState(robo::Robot::X) = true_new_robot_x;
+  double true_new_robot_velocity{ 0.66667 };
+  trueNewState(robo::Robot::VEL) = true_new_robot_velocity;
 
-  //std::cout << "true state: " << trueNewState << std::endl;
-  //std::cout << "actual state: " << robot.getState() << std::endl;
+  EXPECT_STATES_NEAR(trueNewState, robot.getState());
+}
 
-  ////EXPECT_STATES_NEAR(trueNewPose, robot.getPose());
+TEST(ARobotAtRestWithDesiredOmega, propagateDynamics_NewStateCorrect)
+{
+  robo::Robot robot;
+  double robot_desired_omega{ 1.0 };
+  robot.setDesiredOmega(robot_desired_omega);
 
-//}
+  double time_step{ 1.0 };
+  robot.propagateDynamics(time_step);
+
+  Eigen::Matrix<double, 5, 1> trueNewState;
+  trueNewState.setZero();
+  double true_new_robot_heading{ 0.66667 };
+  trueNewState(robo::Robot::HEADING) = true_new_robot_heading;
+  double true_new_robot_omega{ 0.66667 };
+  trueNewState(robo::Robot::OMEGA) = true_new_robot_omega;
+
+  EXPECT_STATES_NEAR(trueNewState, robot.getState());
+}
