@@ -18,8 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
   main_window_ui_->setupUi(this);
   this->setCentralWidget(osg_widget_);
-
-  timer_id_ = this->startTimer(1000);
+  
+  double robot_dynamics_rate_ms{ 1. / robot_dynamics_rate_hz_ * 1000. };
+  timer_id_ = this->startTimer(robot_dynamics_rate_ms);
 }
 
 MainWindow::~MainWindow()
@@ -38,16 +39,20 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
   switch (event->key())
   {
     case Qt::Key_Up:
-      robot_->moveForward();
+      //robot_->moveForward();
+      robot_->setDesiredVelocity(1.0);
       break;
     case Qt::Key_Down:
-      robot_->moveBackward();
+      //robot_->moveBackward();
+      robot_->setDesiredVelocity(-1.0);
       break;
     case Qt::Key_Right:
-      robot_->rotateRight();
+      //robot_->rotateRight();
+      robot_->setDesiredOmega(1.0);
       break;
     case Qt::Key_Left:
-      robot_->rotateLeft();
+      //robot_->rotateLeft();
+      robot_->setDesiredOmega(-1.0);
       break;
     case Qt::Key_Escape:
     case Qt::Key_Q:
@@ -58,8 +63,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
   QMainWindow::keyPressEvent(event);
 }
 
-void MainWindow::timerEvent(QTimerEvent *event)
+void MainWindow::timerEvent(QTimerEvent *)
 {
-  std::cout << "timer ...." << std::endl;
+  double robot_dynamics_rate_s{ 1. / robot_dynamics_rate_hz_ };
+  robot_->propagateDynamics(robot_dynamics_rate_s);
+  std::cout << "robot vel: " << robot_->getVelocity() << std::endl;
+  std::cout << "robot x: " << robot_->getX() << std::endl;
 
 }

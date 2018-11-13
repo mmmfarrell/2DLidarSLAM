@@ -32,10 +32,11 @@ public slots:
 protected:
   Ui::MainWindowForm *main_window_ui_;
   OSGWidget *osg_widget_{ nullptr };
+  std::unique_ptr<robo::Robot> robot_{ nullptr };
 
   int timer_id_;
-  void timerEvent(QTimerEvent *event);
-  std::unique_ptr<robo::Robot> robot_{ nullptr };
+  const double robot_dynamics_rate_hz_{ 100.0 };
+  void timerEvent(QTimerEvent *);
 };
 
 #endif  // MAINWINDOW_H

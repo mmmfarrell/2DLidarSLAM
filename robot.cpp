@@ -1,5 +1,6 @@
 #include "robot.h"
 
+#include <Eigen/Core>
 #include <math.h>
 
 namespace robo
@@ -33,6 +34,16 @@ double Robot::getY() const
 double Robot::getHeading() const
 {
   return state_(Robot::HEADING);
+}
+
+double Robot::getVelocity() const
+{
+  return state_(Robot::VEL);
+}
+
+double Robot::getOmega() const
+{
+  return state_(Robot::OMEGA);
 }
 
 void Robot::resetDesiredVelocities()

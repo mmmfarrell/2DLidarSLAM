@@ -5,6 +5,8 @@
 
 #include <osg/ref_ptr>
 
+class QTimerEvent;
+
 namespace robo
 {
 class Robot;
@@ -42,6 +44,8 @@ public:
   void displayRobot(robo::Robot* robot);
 
 protected:
+  void timerEvent(QTimerEvent *);
+
   virtual void paintEvent(QPaintEvent *paintEvent);
   virtual void paintGL();
   virtual void resizeGL(int width, int height);
@@ -64,6 +68,9 @@ protected:
 
   void setupViewCamera();
   void setCameraToTrackNode(osg::Node* node_to_track);
+
+  int timer_id_;
+  const double graphics_update_rate_hz_{ 30.0 };
 
   osg::ref_ptr<osgViewer::GraphicsWindowEmbedded> graphics_window_;
   osg::ref_ptr<osgViewer::CompositeViewer> viewer_;

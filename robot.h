@@ -5,7 +5,9 @@
 
 namespace robo
 {
+
 typedef Eigen::Matrix<double, 5, 1> stateVector;
+
 class Robot
 {
 public:
@@ -26,6 +28,8 @@ public:
   double getX() const;
   double getY() const;
   double getHeading() const;
+  double getVelocity() const;
+  double getOmega() const;
 
   void resetDesiredVelocities();
 

@@ -30,6 +30,7 @@
 #include <vector>
 
 #include <QKeyEvent>
+#include <QTimerEvent>
 #include <QPainter>
 #include <QWheelEvent>
 
@@ -61,10 +62,14 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
   this->setMinimumSize(100, 100);
   this->setMouseTracking(true);
   this->update();
+
+  double graphics_update_rate_ms{ 1. / graphics_update_rate_hz_ * 1000. };
+  timer_id_ = this->startTimer(graphics_update_rate_ms);
 }
 
 OSGWidget::~OSGWidget()
 {
+  this->killTimer(timer_id_);
 }
 
 void OSGWidget::displayRobot(robo::Robot *robot)
@@ -82,6 +87,11 @@ void OSGWidget::displayRobot(robo::Robot *robot)
   root_->addChild(robot_transform);
 
   this->setCameraToTrackNode(robot_node.get());
+}
+
+void OSGWidget::timerEvent(QTimerEvent *)
+{
+  this->update();
 }
 
 void OSGWidget::paintEvent(QPaintEvent *)
