@@ -301,14 +301,14 @@ void OSGWidget::setupViewCamera()
 void OSGWidget::setCameraToTrackNode(osg::Node* node_to_track)
 {
   osgGA::NodeTrackerManipulator::TrackerMode trackerMode =
-      osgGA::NodeTrackerManipulator::NODE_CENTER;
+      osgGA::NodeTrackerManipulator::NODE_CENTER_AND_ROTATION;
   osgGA::NodeTrackerManipulator::RotationMode rotationMode =
       osgGA::NodeTrackerManipulator::ELEVATION_AZIM;
 
   osg::ref_ptr<osgGA::NodeTrackerManipulator> manipulator{
     new osgGA::NodeTrackerManipulator };
 
-  osg::Vec3 home_eye_position{ -30.f, 0.f, 30.f };
+  osg::Vec3 home_eye_position{ 0.f, 30.f, 30.f };
   osg::Vec3 home_center_position{ 0.f, 0.f, 0.f };
   osg::Vec3 home_up_direction_vector{ 0.f, 0.f, 1.f };
   manipulator->setHomePosition(home_eye_position, home_center_position,
