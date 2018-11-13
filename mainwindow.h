@@ -9,6 +9,7 @@
 #include "robot.h"
 
 class OSGWidget;
+class QTimerEvent;
 
 namespace Ui
 {
@@ -32,6 +33,8 @@ protected:
   Ui::MainWindowForm *main_window_ui_;
   OSGWidget *osg_widget_{ nullptr };
 
+  int timer_id_;
+  void timerEvent(QTimerEvent *event);
   std::unique_ptr<robo::Robot> robot_{ nullptr };
 };
 

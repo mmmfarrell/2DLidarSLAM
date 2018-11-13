@@ -6,6 +6,7 @@
 #include <iostream> // TODO remove
 #include <QDockWidget>
 #include <QKeyEvent>
+#include <QTimerEvent>
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow{parent},
@@ -17,10 +18,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
   main_window_ui_->setupUi(this);
   this->setCentralWidget(osg_widget_);
+
+  timer_id_ = this->startTimer(1000);
 }
 
 MainWindow::~MainWindow()
 {
+  this->killTimer(timer_id_);
   delete main_window_ui_;
 }
 
@@ -52,4 +56,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
   }
 
   QMainWindow::keyPressEvent(event);
+}
+
+void MainWindow::timerEvent(QTimerEvent *event)
+{
+  std::cout << "timer ...." << std::endl;
+
 }
