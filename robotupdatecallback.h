@@ -19,9 +19,6 @@ public:
 
 private:
   robo::Robot *robot_ptr_;
-  osg::Matrixd model_rotation_matrix_;
-
-  void computeModelRotationMatrix();
 };
 
 #endif /* ROBOTUPDATECALLBACK_H */
