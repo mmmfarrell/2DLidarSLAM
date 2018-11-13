@@ -110,6 +110,7 @@ stateVector Robot::xdot(stateVector state)
   // Unicycle Robot dynamics from eq. 1
   // http://vislab.isr.ist.utl.pt/publications/08-jetc-rcarona-vcontrol.pdf
   stateVector xdot;
+  xdot.setZero();
   double velocity{ state(Robot::VEL) };
   double omega{ state(Robot::OMEGA) };
   double theta{ state(Robot::HEADING) };
