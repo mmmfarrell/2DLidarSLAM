@@ -5,7 +5,10 @@
 
 #include <osg/ref_ptr>
 
+namespace robo
+{
 class Robot;
+}
 
 namespace osg
 {
@@ -36,7 +39,7 @@ public:
   OSGWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
   virtual ~OSGWidget();
 
-  void displayRobot(Robot* robot);
+  void displayRobot(robo::Robot* robot);
 
 protected:
   virtual void paintEvent(QPaintEvent *paintEvent);
@@ -67,7 +70,7 @@ protected:
   osg::ref_ptr<osgViewer::View> view_;
   osg::ref_ptr<osg::Group> root_;
 
-  Robot *robot_ptr_;
+  robo::Robot *robot_ptr_;
 };
 
 #endif

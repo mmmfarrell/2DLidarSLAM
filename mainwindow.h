@@ -32,7 +32,7 @@ protected:
   Ui::MainWindowForm *main_window_ui_;
   OSGWidget *osg_widget_{ nullptr };
 
-  std::unique_ptr<Robot> robot_{ nullptr };
+  std::unique_ptr<robo::Robot> robot_{ nullptr };
 };
 
 #endif  // MAINWINDOW_H

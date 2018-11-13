@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
   QMainWindow{parent},
   main_window_ui_{ new Ui::MainWindowForm },
   osg_widget_{ new OSGWidget{ this } },
-  robot_{ new Robot }
+  robot_{ new robo::Robot }
 {
   osg_widget_->displayRobot(robot_.get());
 

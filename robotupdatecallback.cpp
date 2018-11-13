@@ -1,6 +1,5 @@
 #include "robotupdatecallback.h"
 #include "robot.h"
-#include "pose.h"
 
 #include <iostream>
 #include <osg/Vec3d>
@@ -8,7 +7,7 @@
 #include <osg/Matrixd>
 #include <osg/PositionAttitudeTransform>
 
-RobotUpdateCallback::RobotUpdateCallback(Robot* robot) :
+RobotUpdateCallback::RobotUpdateCallback(robo::Robot* robot) :
   robot_ptr_{ robot }
 {
   this->computeModelRotationMatrix();
@@ -25,17 +24,15 @@ void RobotUpdateCallback::operator()(osg::Node *node, osg::NodeVisitor *nv)
   if (pat == nullptr)
     return;
 
-  Pose robot_pose{ robot_ptr_->getPose() };
-  osg::Vec3d newRobotPosition{ robot_pose.x, robot_pose.y, 0. };
+  osg::Vec3d newRobotPosition{ robot_ptr_->getX(), robot_ptr_->getY(), 0. };
   pat->setPosition(newRobotPosition);
 
   osg::Matrixd heading_rot_mat;
-  heading_rot_mat.makeRotate(robot_pose.heading + osg::DegreesToRadians(55.), osg::Vec3(0, 0, 1));
+  heading_rot_mat.makeRotate(robot_ptr_->getHeading() + osg::DegreesToRadians(55.), osg::Vec3(0, 0, 1));
 
   osg::Matrixd total_rot_mat{ heading_rot_mat * model_rotation_matrix_ };
   osg::Quat newRobotAttitude{ total_rot_mat.getRotate() };
   pat->setAttitude(newRobotAttitude);
-  std::cout << "heading: " << robot_pose.heading << std::endl;
 
   traverse(node, nv);
 }

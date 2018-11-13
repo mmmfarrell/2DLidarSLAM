@@ -67,7 +67,7 @@ OSGWidget::~OSGWidget()
 {
 }
 
-void OSGWidget::displayRobot(Robot *robot)
+void OSGWidget::displayRobot(robo::Robot *robot)
 {
   robot_ptr_ = robot;
 
