@@ -24,6 +24,10 @@
 #include <osgViewer/View>
 #include <osgViewer/ViewerEventHandlers>
 
+// TODO cleanup
+#include <osgUtil/LineSegmentIntersector>
+// TODO cleanup
+
 #include <osgDB/ReadFile>
 
 #include <stdexcept>
@@ -55,6 +59,20 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
   viewer_->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
   viewer_->realize();
   view_->home();
+
+  osg::Vec3 sp(100, 0, 4);
+  osg::Vec3 ep(-10, 0, 4);
+  osg::ref_ptr<osg::Geometry> beam(new osg::Geometry);
+  osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
+  points->push_back(sp);
+  points->push_back(ep);
+  osg::ref_ptr<osg::Vec4Array> color = new osg::Vec4Array;
+  color->push_back(osg::Vec4(1.0, 0.0, 0.0, 1.0));
+  beam->setVertexArray(points.get());
+  beam->setColorArray(color.get());
+  beam->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+  beam->addPrimitiveSet(new osg::DrawArrays(GL_LINES, 0, 2));
+  root_->addChild(beam);
 
   this->setupViewCamera();
 
@@ -126,6 +144,25 @@ void OSGWidget::keyPressEvent(QKeyEvent *event)
   if (event->key() == Qt::Key_H)
   {
     view_->home();
+  }
+  else if (event->key() == Qt::Key_L) // TODO remove!
+  {
+    std::cout << "Lidar" << std::endl;
+    osg::Vec3d start{ -10., 0., 4. };
+    osg::Vec3d end{ 100., 0., 4. };
+    //osg::Vec3d start{ 0., 10., 0. };
+    //osg::Vec3d end{ 0., -10., 0. };
+    osg::ref_ptr<osgUtil::LineSegmentIntersector> intersector =
+        new osgUtil::LineSegmentIntersector(start, end);
+    osgUtil::IntersectionVisitor iv(intersector.get());
+    root_->accept(iv);
+    std::cout << "Contains intersections? " << intersector->containsIntersections() << std::endl;
+    osg::Vec3d first_int = intersector->getFirstIntersection().getWorldIntersectPoint();
+    std::cout << "first int: " << first_int[0] << ", " << first_int[1] << ", "
+              << first_int[2] << std::endl;
+    first_int = intersector->getFirstIntersection().getLocalIntersectPoint();
+    std::cout << "first int: " << first_int[0] << ", " << first_int[1] << ", "
+              << first_int[2] << std::endl;
   }
   else
   {
