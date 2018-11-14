@@ -12,6 +12,8 @@
 
 class OSGWidget;
 class QTimerEvent;
+class QDockWidget;
+class LaserScanWidget;
 
 namespace Ui
 {
@@ -35,6 +37,10 @@ public slots:
 protected:
   Ui::MainWindowForm *main_window_ui_;
   OSGWidget *osg_widget_{ nullptr };
+
+  QDockWidget *laser_scan_dock_widget_{ nullptr };
+  LaserScanWidget* laser_scan_widget_{ nullptr };
+
   std::unique_ptr<robo::Robot> robot_{ nullptr };
 
   int velocity_scale_factor_;

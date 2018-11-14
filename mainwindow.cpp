@@ -2,6 +2,7 @@
 #include "ui_mainwindowform.h"
 #include "osgwidget.h"
 #include "robot.h"
+#include "laserscanwidget.h"
 
 #include <QDockWidget>
 #include <QKeyEvent>
@@ -15,9 +16,15 @@ MainWindow::MainWindow(QWidget *parent) :
   osg_widget_{ new OSGWidget{ this } },
   robot_{ new robo::Robot }
 {
-  osg_widget_->displayRobot(robot_.get());
-
   main_window_ui_->setupUi(this);
+
+  laser_scan_dock_widget_ = new QDockWidget("Raw Laser Scan Data", this);
+  this->addDockWidget(Qt::RightDockWidgetArea, laser_scan_dock_widget_);
+  laser_scan_widget_ = new LaserScanWidget;
+  laser_scan_dock_widget_->setWidget(laser_scan_widget_);
+  
+
+  osg_widget_->displayRobot(robot_.get());
   this->setCentralWidget(osg_widget_);
   
   velocity_scale_factor_ = 1;

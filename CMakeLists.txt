@@ -39,6 +39,7 @@ SET(MYSOURCE
     robot.cpp # TODO move to library?
     robotupdatecallback.cpp
     models.cpp
+    laserscanwidget.cpp
     )
 
 add_executable(${PROJECT_NAME}
