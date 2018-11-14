@@ -26,4 +26,9 @@ Planned Stories:
 - As a user I want to see the robot move on a floor texture.
 - As a user I want to give desired velocity commands to the robot from my
 keyboard.
+- As a useer I want the camera to rotate with the robot I am controlling.
+
+## Sprint #2
+Planned Stories:
+- As a user I want to see the robot's lidar sensor outputs in a separate window.
 
