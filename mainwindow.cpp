@@ -92,6 +92,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 void MainWindow::setupLidar()
 {
   lidar_.reset(new LaserScanner(osg_widget_->getScene(), robot_.get()));
+  laser_scan_widget_->setMaxLaserDepth(lidar_->getMaxDepth());
 }
 
 void MainWindow::incrementVelocityScaleFactor()
@@ -154,5 +155,7 @@ void MainWindow::dynamicsTimerEvent()
 void MainWindow::lidarTimerEvent()
 {
   //std::cout << "Lidar Event" << std::endl;
-  qDebug() << "Lidar Event" << lidar_->getScan();
+  //qDebug() << "Lidar Event" << lidar_->getScan();
+  laser_scan_widget_->updateLaserScan(lidar_->getScan());
+  laser_scan_widget_->update();
 }
