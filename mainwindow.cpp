@@ -2,6 +2,7 @@
 #include "ui_mainwindowform.h"
 #include "osgwidget.h"
 #include "robot.h"
+#include "laserscanner.h"
 #include "laserscanwidget.h"
 
 #include <QDockWidget>
@@ -22,7 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
   this->addDockWidget(Qt::RightDockWidgetArea, laser_scan_dock_widget_);
   laser_scan_widget_ = new LaserScanWidget;
   laser_scan_dock_widget_->setWidget(laser_scan_widget_);
-  
+
+  this->setupLidar();
 
   osg_widget_->displayRobot(robot_.get());
   this->setCentralWidget(osg_widget_);
@@ -30,12 +32,16 @@ MainWindow::MainWindow(QWidget *parent) :
   velocity_scale_factor_ = 1;
 
   double robot_dynamics_rate_ms{ 1. / robot_dynamics_rate_hz_ * 1000. };
-  timer_id_ = this->startTimer(robot_dynamics_rate_ms);
+  dynamics_timer_id_ = this->startTimer(robot_dynamics_rate_ms);
+
+  double lidar_rate_ms{ 1. / lidar_rate_hz_ * 1000. };
+  lidar_timer_id_ = this->startTimer(lidar_rate_ms);
 }
 
 MainWindow::~MainWindow()
 {
-  this->killTimer(timer_id_);
+  this->killTimer(dynamics_timer_id_);
+  this->killTimer(lidar_timer_id_);
   delete main_window_ui_;
 }
 
@@ -83,6 +89,11 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
   QMainWindow::keyPressEvent(event);
 }
 
+void MainWindow::setupLidar()
+{
+  lidar_.reset(new LaserScanner(osg_widget_->getScene(), robot_.get()));
+}
+
 void MainWindow::incrementVelocityScaleFactor()
 {
   if (velocity_scale_factor_ != max_vel_scale_factor_)
@@ -124,10 +135,24 @@ void MainWindow::handlePressedKeys()
   robot_->setDesiredOmega(desired_omega);
 }
 
-void MainWindow::timerEvent(QTimerEvent *)
+void MainWindow::timerEvent(QTimerEvent *event)
+{
+  if (event->timerId() == dynamics_timer_id_)
+    this->dynamicsTimerEvent();
+  else if (event->timerId() == lidar_timer_id_)
+    this->lidarTimerEvent();
+}
+
+void MainWindow::dynamicsTimerEvent()
 {
   this->handlePressedKeys();
 
   double robot_dynamics_rate_s{ 1. / robot_dynamics_rate_hz_ };
   robot_->propagateDynamics(robot_dynamics_rate_s);
+}
+
+void MainWindow::lidarTimerEvent()
+{
+  //std::cout << "Lidar Event" << std::endl;
+  qDebug() << "Lidar Event" << lidar_->getScan();
 }

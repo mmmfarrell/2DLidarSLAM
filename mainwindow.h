@@ -9,6 +9,7 @@
 #include <QtCore>
 
 #include "robot.h"
+#include "laserscanner.h"
 
 class OSGWidget;
 class QTimerEvent;
@@ -43,6 +44,9 @@ protected:
 
   std::unique_ptr<robo::Robot> robot_{ nullptr };
 
+  std::unique_ptr<LaserScanner> lidar_{ nullptr };
+  void setupLidar();
+
   int velocity_scale_factor_;
   const int max_vel_scale_factor_{ 5 };
   void incrementVelocityScaleFactor();
@@ -52,9 +56,15 @@ protected:
   void handlePressedKeys();
   std::map<int, bool> keys_pressed_map_;
 
-  int timer_id_;
+  void timerEvent(QTimerEvent *event);
+
+  int dynamics_timer_id_;
   const double robot_dynamics_rate_hz_{ 100.0 };
-  void timerEvent(QTimerEvent *);
+  void dynamicsTimerEvent();
+
+  int lidar_timer_id_;
+  const double lidar_rate_hz_{ 30.0 };
+  void lidarTimerEvent();
 };
 
 #endif  // MAINWINDOW_H

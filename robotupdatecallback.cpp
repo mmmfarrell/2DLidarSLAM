@@ -1,7 +1,6 @@
 #include "robotupdatecallback.h"
 #include "robot.h"
 
-#include <iostream>
 #include <osg/Vec3d>
 #include <osg/Quat>
 #include <osg/Matrixd>

@@ -25,6 +25,7 @@
 #include <osgViewer/ViewerEventHandlers>
 
 // TODO cleanup
+#include <osgUtil/IntersectionVisitor>
 #include <osgUtil/LineSegmentIntersector>
 // TODO cleanup
 
@@ -105,6 +106,11 @@ void OSGWidget::displayRobot(robo::Robot *robot)
   root_->addChild(robot_transform);
 
   this->setCameraToTrackNode(robot_node.get());
+}
+
+osg::Group* OSGWidget::getScene()
+{
+  return root_.get();
 }
 
 void OSGWidget::timerEvent(QTimerEvent *)

@@ -42,6 +42,7 @@ public:
   virtual ~OSGWidget();
 
   void displayRobot(robo::Robot* robot);
+  osg::Group* getScene();
 
 protected:
   void timerEvent(QTimerEvent *);
