@@ -156,8 +156,6 @@ void MainWindow::dynamicsTimerEvent()
 
 void MainWindow::lidarTimerEvent()
 {
-  //std::cout << "Lidar Event" << std::endl;
-  //qDebug() << "Lidar Event" << lidar_->getScan();
   unsigned int number_laser_returns{ lidar_->getNumberLaserReturns() };
   std::vector<float> laser_scan;
   laser_scan.resize(number_laser_returns, std::numeric_limits<float>::max());

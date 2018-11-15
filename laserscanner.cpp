@@ -1,7 +1,6 @@
 #include "laserscanner.h"
 #include "robot.h"
 
-#include <iostream>
 #include <math.h>
 #include <limits>
 
@@ -48,7 +47,6 @@ void LaserScanner::getScan(std::vector<float>& laser_scan)
 {
   if (laser_scan.size() != number_laser_returns_)
     return; // TODO maybe throw error?
-  //std::cout << "laser scan size: " << laser_scan.size() << std::endl;
 
   for (unsigned int i{ 0 }; i < number_laser_returns_; i++)
   {
@@ -56,12 +54,9 @@ void LaserScanner::getScan(std::vector<float>& laser_scan)
     osgUtil::IntersectionVisitor iv(line_seg_intersector_.get());
     osg_scene_->accept(iv);
 
-    //std::cout << "Lidar" << std::endl;
     osg::Vec3d robot_position{ robot_ptr_->getX(), robot_ptr_->getY(), 0. };
     osg::Vec3d laser_start{ robot_position + lidar_position_offset_ };
     line_seg_intersector_->setStart(laser_start);
-    //std::cout << "laser start: " << laser_start[0] << ", " << laser_start[1] << ", "
-      //<< laser_start[2] << std::endl;
 
     double laser_angle{ min_angle_rad_ + i * angle_increment_ };
 
@@ -72,14 +67,9 @@ void LaserScanner::getScan(std::vector<float>& laser_scan)
     osg::Vec3d laser_xy{ laser_x, laser_y, 0. };
     osg::Vec3d laser_end{ laser_xy + laser_start };
     line_seg_intersector_->setEnd(laser_end);
-    //std::cout << "laser end: " << laser_end[0] << ", " << laser_end[1] << ", "
-              //<< laser_end[2] << std::endl;
 
     bool contains_intersections{
       line_seg_intersector_->containsIntersections() };
-    // std::cout << "first int: " << first_int[0] << ", " << first_int[1] << ",
-    // "
-    //<< first_int[2] << std::endl;
 
     double depth = std::numeric_limits<float>::max();
 
@@ -91,17 +81,5 @@ void LaserScanner::getScan(std::vector<float>& laser_scan)
     }
 
     laser_scan[i] = depth;
-    //std::cout << "depth: " << depth << std::endl;
   }
-
-  //for (auto laser : laser_scan)
-  //{
-    //std::cout << "laser: " << laser << std::endl;
-  //}
-
-  //if (contains_intersections)
-    //return depth;
-  //else
-    //return DBL_MAX;
-
 }

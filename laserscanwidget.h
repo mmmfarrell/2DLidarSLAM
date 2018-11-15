@@ -2,6 +2,7 @@
 #define LASERSCANWIDGET_H
 
 #include <vector>
+#include <QPainter>
 #include <QWidget>
 
 class QPaintEvent;
@@ -19,6 +20,9 @@ public:
 
 protected:
   void paintEvent(QPaintEvent *event) override;
+  void paintRobot(QPainter &painter);
+  void paintLaserScan(QPainter &painter);
+
   double determineScaleFactor();
 
   std::vector<float> laser_scan_;

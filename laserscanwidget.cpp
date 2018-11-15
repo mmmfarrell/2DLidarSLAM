@@ -1,6 +1,5 @@
 #include "laserscanwidget.h"
 
-#include <iostream> // TODO remove
 #include <limits>
 #include <math.h>
 
@@ -42,19 +41,28 @@ void LaserScanWidget::paintEvent(QPaintEvent *)
   QPainter painter(this);
   painter.setRenderHint(QPainter::Antialiasing, true);
 
+  this->paintRobot(painter);
+  this->paintLaserScan(painter);
+}
+
+void LaserScanWidget::paintRobot(QPainter &painter)
+{
   painter.save();
   painter.setPen(Qt::blue);
   painter.setBrush(Qt::blue);
   painter.translate(width() / 2., height() / 2.);
   painter.drawEllipse(0, 0, 5, 5);
   painter.restore();
+}
 
+void LaserScanWidget::paintLaserScan(QPainter &painter)
+{
   double paint_scale_factor{ this->determineScaleFactor() };
 
   painter.setPen(Qt::red);
   painter.setBrush(Qt::red);
 
-  for (unsigned int i{0}; i < laser_scan_.size(); i++)
+  for (unsigned int i{ 0 }; i < laser_scan_.size(); i++)
   {
     if (laser_scan_[i] == std::numeric_limits<float>::max())
       continue;
@@ -63,16 +71,10 @@ void LaserScanWidget::paintEvent(QPaintEvent *)
     painter.translate(width() / 2., height() / 2.);
     float laser_angle{ min_laser_angle_rad_ + i * laser_angle_increment_ };
     float laser_depth{ laser_scan_[i] };
-    float laser_return_x{ laser_depth * cos(laser_angle) };
-    float laser_return_y{ laser_depth * sin(laser_angle) };
-    //std::cout << "angle: " << laser_angle << " depth: " << laser_depth << std::endl;
-    //std::cout << "x: " << laser_return_x << " y: " << laser_return_y << std::endl;
-    //painter.drawEllipse(0, -paint_scale_factor * laser_scan_, 5, 5);
+    float laser_return_x{ laser_depth * cosf(laser_angle) };
+    float laser_return_y{ laser_depth * sinf(laser_angle) };
     painter.drawEllipse(-paint_scale_factor * laser_return_y,
                         -paint_scale_factor * laser_return_x, 5, 5);
-    //painter.drawEllipse(paint_scale_factor * laser_return_x,
-                        //-paint_scale_factor * laser_return_y, 5, 5);
-
     painter.restore();
   }
 }
