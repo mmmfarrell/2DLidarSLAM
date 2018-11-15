@@ -1,6 +1,8 @@
 #ifndef LASERSCANNER_H
 #define LASERSCANNER_H
 
+#include <vector>
+
 #include <osg/Vec3d>
 #include <osgUtil/LineSegmentIntersector>
 
@@ -20,7 +22,12 @@ public:
   LaserScanner(osg::Group *scene, robo::Robot *robot);
 
   double getMaxDepth() const;
-  double getScan();
+  double getMinAngleRadians() const;
+  double getMaxAngleRadians() const;
+  double getAngleIncrement() const;
+  unsigned int getNumberLaserReturns() const;
+
+  void getScan(std::vector<float>& laser_scan);
 
 private:
   osg::Group *osg_scene_;
@@ -31,7 +38,9 @@ private:
   const double max_laser_depth_{ 50. };
   const double min_angle_rad_{ -M_PI };
   const double max_angle_rad_{ M_PI };
-  const double angle_increment{ M_PI / 60. };
+  const double angle_increment_{ M_PI / 60. };
+  const unsigned int number_laser_returns_{ static_cast<unsigned int>(
+      (max_angle_rad_ - min_angle_rad_) / angle_increment_) };
 };
 
 #endif /* LASERSCANNER_H */

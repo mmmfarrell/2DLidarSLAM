@@ -5,6 +5,8 @@
 #include "laserscanner.h"
 #include "laserscanwidget.h"
 
+#include <limits>
+
 #include <QDockWidget>
 #include <QKeyEvent>
 #include <QTimerEvent>
@@ -156,6 +158,11 @@ void MainWindow::lidarTimerEvent()
 {
   //std::cout << "Lidar Event" << std::endl;
   //qDebug() << "Lidar Event" << lidar_->getScan();
-  laser_scan_widget_->updateLaserScan(lidar_->getScan());
-  laser_scan_widget_->update();
+  unsigned int number_laser_returns{ lidar_->getNumberLaserReturns() };
+  std::vector<float> laser_scan;
+  laser_scan.resize(number_laser_returns, std::numeric_limits<float>::max());
+
+  lidar_->getScan(laser_scan);
+
+  laser_scan_widget_->updateLaserScan(laser_scan);
 }

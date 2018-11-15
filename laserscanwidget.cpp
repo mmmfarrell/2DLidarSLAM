@@ -1,16 +1,19 @@
 #include "laserscanwidget.h"
 
 #include <iostream> // TODO remove
+#include <limits>
+#include <math.h>
+
 #include <QPainter>
 #include <QPalette>
 
 LaserScanWidget::LaserScanWidget(QWidget *parent) :
   QWidget(parent)
 {
+  laser_scan_.resize(number_laser_returns_, 0.);
+
   this->setBackgroundRole(QPalette::Base);
   this->setAutoFillBackground(true);
-
-  laser_scan_ = 0.0; // TODO changeme
 }
 
 QSize LaserScanWidget::minimumSizeHint() const
@@ -28,9 +31,10 @@ void LaserScanWidget::setMaxLaserDepth(double max_laser_depth)
   this->max_laser_depth_ = max_laser_depth;
 }
 
-void LaserScanWidget::updateLaserScan(double new_scan)
+void LaserScanWidget::updateLaserScan(std::vector<float> new_scan)
 {
   laser_scan_ = new_scan;
+  this->update();
 }
 
 void LaserScanWidget::paintEvent(QPaintEvent *)
@@ -49,10 +53,28 @@ void LaserScanWidget::paintEvent(QPaintEvent *)
 
   painter.setPen(Qt::red);
   painter.setBrush(Qt::red);
-  painter.save();
-  painter.translate(width() / 2., height() / 2.);
-  painter.drawEllipse(0, -paint_scale_factor * laser_scan_, 5, 5);
-  painter.restore();
+
+  for (unsigned int i{0}; i < laser_scan_.size(); i++)
+  {
+    if (laser_scan_[i] == std::numeric_limits<float>::max())
+      continue;
+
+    painter.save();
+    painter.translate(width() / 2., height() / 2.);
+    float laser_angle{ min_laser_angle_rad_ + i * laser_angle_increment_ };
+    float laser_depth{ laser_scan_[i] };
+    float laser_return_x{ laser_depth * cos(laser_angle) };
+    float laser_return_y{ laser_depth * sin(laser_angle) };
+    //std::cout << "angle: " << laser_angle << " depth: " << laser_depth << std::endl;
+    //std::cout << "x: " << laser_return_x << " y: " << laser_return_y << std::endl;
+    //painter.drawEllipse(0, -paint_scale_factor * laser_scan_, 5, 5);
+    painter.drawEllipse(-paint_scale_factor * laser_return_y,
+                        -paint_scale_factor * laser_return_x, 5, 5);
+    //painter.drawEllipse(paint_scale_factor * laser_return_x,
+                        //-paint_scale_factor * laser_return_y, 5, 5);
+
+    painter.restore();
+  }
 }
 
 double LaserScanWidget::determineScaleFactor()

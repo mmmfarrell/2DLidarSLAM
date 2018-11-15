@@ -54,20 +54,6 @@ OSGWidget::OSGWidget(QWidget *parent, Qt::WindowFlags flags) :
   viewer_->realize();
   view_->home();
 
-  osg::Vec3 sp(100, 0, 4);
-  osg::Vec3 ep(-10, 0, 4);
-  osg::ref_ptr<osg::Geometry> beam(new osg::Geometry);
-  osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
-  points->push_back(sp);
-  points->push_back(ep);
-  osg::ref_ptr<osg::Vec4Array> color = new osg::Vec4Array;
-  color->push_back(osg::Vec4(1.0, 0.0, 0.0, 1.0));
-  beam->setVertexArray(points.get());
-  beam->setColorArray(color.get());
-  beam->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
-  beam->addPrimitiveSet(new osg::DrawArrays(GL_LINES, 0, 2));
-  root_->addChild(beam);
-
   this->setupViewCamera();
 
   this->setFocusPolicy(Qt::StrongFocus);
