@@ -130,25 +130,6 @@ void OSGWidget::keyPressEvent(QKeyEvent *event)
   {
     view_->home();
   }
-  else if (event->key() == Qt::Key_L) // TODO remove!
-  {
-    //std::cout << "Lidar" << std::endl;
-    //osg::Vec3d start{ -10., 0., 4. };
-    //osg::Vec3d end{ 100., 0., 4. };
-    ////osg::Vec3d start{ 0., 10., 0. };
-    ////osg::Vec3d end{ 0., -10., 0. };
-    //osg::ref_ptr<osgUtil::LineSegmentIntersector> intersector =
-        //new osgUtil::LineSegmentIntersector(start, end);
-    //osgUtil::IntersectionVisitor iv(intersector.get());
-    //root_->accept(iv);
-    //std::cout << "Contains intersections? " << intersector->containsIntersections() << std::endl;
-    //osg::Vec3d first_int = intersector->getFirstIntersection().getWorldIntersectPoint();
-    //std::cout << "first int: " << first_int[0] << ", " << first_int[1] << ", "
-              //<< first_int[2] << std::endl;
-    //first_int = intersector->getFirstIntersection().getLocalIntersectPoint();
-    //std::cout << "first int: " << first_int[0] << ", " << first_int[1] << ", "
-              //<< first_int[2] << std::endl;
-  }
   else
   {
     QString key_string{ event->text() };
