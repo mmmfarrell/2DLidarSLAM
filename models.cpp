@@ -4,6 +4,7 @@
 #include <osg/Material>
 #include <osg/Node>
 #include <osg/PositionAttitudeTransform>
+#include <osg/ref_ptr>
 
 osg::ref_ptr<osg::Node> create_scaled_model(osg::ref_ptr<osg::Node> model,
                                             double bounding_radius)

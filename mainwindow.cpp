@@ -95,6 +95,9 @@ void MainWindow::setupLidar()
 {
   lidar_.reset(new LaserScanner(osg_widget_->getScene(), robot_.get()));
   laser_scan_widget_->setMaxLaserDepth(lidar_->getMaxDepth());
+  laser_scan_widget_->setMinLaserAngle(lidar_->getMinAngleRadians());
+  laser_scan_widget_->setMaxLaserAngle(lidar_->getMaxAngleRadians());
+  laser_scan_widget_->setLaserAngleIncrement(lidar_->getAngleIncrement());
 }
 
 void MainWindow::incrementVelocityScaleFactor()

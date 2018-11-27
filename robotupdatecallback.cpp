@@ -26,7 +26,9 @@ void RobotUpdateCallback::operator()(osg::Node *node, osg::NodeVisitor *nv)
   pat->setPosition(newRobotPosition);
 
   osg::Matrixd heading_rot_mat;
-  heading_rot_mat.makeRotate(robot_ptr_->getHeading() + osg::DegreesToRadians(55.), osg::Vec3(0, 0, 1));
+  heading_rot_mat.makeRotate(robot_ptr_->getHeading() +
+                                 osg::DegreesToRadians(55.),
+                             osg::Vec3(0, 0, 1));
 
   osg::Quat newRobotAttitude{ heading_rot_mat.getRotate() };
   pat->setAttitude(newRobotAttitude);

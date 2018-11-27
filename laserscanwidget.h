@@ -16,6 +16,10 @@ public:
   QSize sizeHint() const override;
 
   void setMaxLaserDepth(double max_laser_depth);
+  void setMinLaserAngle(double min_laser_angle);
+  void setMaxLaserAngle(double max_laser_angle);
+  void setLaserAngleIncrement(double laser_angle_increment);
+
   void updateLaserScan(std::vector<float> new_scan);
 
 protected:
@@ -27,11 +31,12 @@ protected:
 
   std::vector<float> laser_scan_;
   double max_laser_depth_{ 0. };
-  float min_laser_angle_rad_{ -M_PI };
-  float max_laser_angle_rad_{ M_PI };
-  float laser_angle_increment_{ M_PI / 60. };
-  unsigned int number_laser_returns_{ static_cast<unsigned int>(
-      (max_laser_angle_rad_ - min_laser_angle_rad_) / laser_angle_increment_) };
+  double min_laser_angle_rad_{ 0 };
+  double max_laser_angle_rad_{ 0 };
+  double laser_angle_increment_{ 0 };
+  unsigned int number_laser_returns_{ 0 };
+
+  void recalculateNumberLaserReturns();
 };
 
 #endif /* LASERSCANWIDGET_H */

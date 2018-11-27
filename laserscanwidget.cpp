@@ -30,6 +30,24 @@ void LaserScanWidget::setMaxLaserDepth(double max_laser_depth)
   this->max_laser_depth_ = max_laser_depth;
 }
 
+void LaserScanWidget::setMinLaserAngle(double min_laser_angle)
+{
+  this->min_laser_angle_rad_ = min_laser_angle;
+  this->recalculateNumberLaserReturns();
+}
+
+void LaserScanWidget::setMaxLaserAngle(double max_laser_angle)
+{
+  this->max_laser_angle_rad_ = max_laser_angle;
+  this->recalculateNumberLaserReturns();
+}
+
+void LaserScanWidget::setLaserAngleIncrement(double laser_angle_increment)
+{
+  this->laser_angle_increment_ = laser_angle_increment;
+  this->recalculateNumberLaserReturns();
+}
+
 void LaserScanWidget::updateLaserScan(std::vector<float> new_scan)
 {
   laser_scan_ = new_scan;
@@ -69,7 +87,8 @@ void LaserScanWidget::paintLaserScan(QPainter &painter)
 
     painter.save();
     painter.translate(width() / 2., height() / 2.);
-    float laser_angle{ min_laser_angle_rad_ + i * laser_angle_increment_ };
+    float laser_angle{ static_cast<float>(min_laser_angle_rad_ +
+                                          i * laser_angle_increment_) };
     float laser_depth{ laser_scan_[i] };
     float laser_return_x{ laser_depth * cosf(laser_angle) };
     float laser_return_y{ laser_depth * sinf(laser_angle) };
@@ -90,4 +109,13 @@ double LaserScanWidget::determineScaleFactor()
   double scale_factor{ min_dimension / 2. / max_laser_depth_ };
 
   return scale_factor;
+}
+
+void LaserScanWidget::recalculateNumberLaserReturns()
+{
+  if (this->laser_angle_increment_ == 0)
+    return;
+
+  number_laser_returns_ = static_cast<unsigned int>(
+      (max_laser_angle_rad_ - min_laser_angle_rad_) / laser_angle_increment_);
 }

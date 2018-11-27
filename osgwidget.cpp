@@ -9,6 +9,7 @@
 #include <osg/Geometry>
 #include <osg/Material>
 #include <osg/PositionAttitudeTransform>
+#include <osg/ref_ptr>
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
 #include <osg/StateSet>
