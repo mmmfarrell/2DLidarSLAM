@@ -44,7 +44,7 @@ protected:
 
   std::unique_ptr<robo::Robot> robot_{ nullptr };
 
-  std::unique_ptr<LaserScanner> lidar_{ nullptr };
+  std::unique_ptr<robo::LaserScanner> lidar_{ nullptr };
   void setupLidar();
 
   int velocity_scale_factor_;

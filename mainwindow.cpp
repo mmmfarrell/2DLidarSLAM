@@ -93,7 +93,8 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 
 void MainWindow::setupLidar()
 {
-  lidar_.reset(new LaserScanner(osg_widget_->getScene(), robot_.get()));
+  lidar_.reset(new robo::LaserScanner(osg_widget_->getScene(), robot_.get()));
+
   laser_scan_widget_->setMaxLaserDepth(lidar_->getMaxDepth());
   laser_scan_widget_->setMinLaserAngle(lidar_->getMinAngleRadians());
   laser_scan_widget_->setMaxLaserAngle(lidar_->getMaxAngleRadians());

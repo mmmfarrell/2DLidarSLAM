@@ -29,6 +29,16 @@ IF (NOT TARGET gtest)
   add_subdirectory(lib/googletest)
 ENDIF()
 
+add_library(RoboLib STATIC
+  robot.h
+  robot.cpp
+  laserscanner.h
+  laserscanner.cpp
+  )
+target_link_libraries(RoboLib
+    ${OPENSCENEGRAPH_LIBRARIES}	
+)
+
 SET(MYSOURCE
     main.cpp
     mainwindow.cpp
@@ -36,11 +46,9 @@ SET(MYSOURCE
     mainwindowform.ui
     osgwidget.h
     osgwidget.cpp
-    robot.cpp # TODO move to library?
     robotupdatecallback.cpp
     models.cpp
     laserscanwidget.cpp
-    laserscanner.cpp
     )
 
 add_executable(${PROJECT_NAME}
@@ -51,11 +59,10 @@ target_link_libraries(${PROJECT_NAME}
     ${OPENSCENEGRAPH_LIBRARIES}	
     Qt5::Widgets
     Qt5::Gui
+    RoboLib
 )
 
 add_executable(TestRobot
-  robot.cpp
-  robot.h
   test_robot.cpp
   )
-target_link_libraries(TestRobot gtest gtest_main)
+target_link_libraries(TestRobot gtest gtest_main RoboLib)

@@ -16,6 +16,8 @@ namespace osg
 class Group;
 }
 
+namespace robo
+{
 class LaserScanner
 {
 public:
@@ -42,5 +44,6 @@ private:
   const unsigned int number_laser_returns_{ static_cast<unsigned int>(
       (max_angle_rad_ - min_angle_rad_) / angle_increment_) };
 };
+} // namespace robo
 
 #endif /* LASERSCANNER_H */

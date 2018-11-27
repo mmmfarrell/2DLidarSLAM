@@ -8,6 +8,8 @@
 #include <osgUtil/IntersectionVisitor>
 #include <osgUtil/LineSegmentIntersector>
 
+namespace robo
+{
 LaserScanner::LaserScanner(osg::Group *scene, robo::Robot *robot) :
   osg_scene_{ scene },
   robot_ptr_{ robot }
@@ -83,3 +85,4 @@ void LaserScanner::getScan(std::vector<float>& laser_scan)
     laser_scan[i] = depth;
   }
 }
+} // namespace robo
