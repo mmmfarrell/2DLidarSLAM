@@ -58,7 +58,7 @@ osg::ref_ptr<osg::Node> create_model(std::string file_name)
 
 osg::ref_ptr<osg::Node> create_robot()
 {
-  std::string robot_file{ "/home/mmmfarrell/Downloads/r2d22.3ds" };
+  std::string robot_file{ "../meshes/r2d2.3ds" };
   double robot_bound_radius{ 3. };
 
   osg::ref_ptr<osg::Node> model{ create_model(robot_file) };
@@ -87,7 +87,7 @@ osg::ref_ptr<osg::Node> create_robot()
 
 osg::ref_ptr<osg::Node> create_maze()
 {
-  std::string maze_file{ "/home/mmmfarrell/Downloads/Maze.3ds" };
+  std::string maze_file{ "../meshes/maze.3ds" };
   double maze_bound_radius{ 50. };
 
   osg::ref_ptr<osg::Node> model{ create_model(maze_file) };
