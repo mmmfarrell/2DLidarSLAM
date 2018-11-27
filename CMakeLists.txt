@@ -49,6 +49,7 @@ SET(MYSOURCE
     robotupdatecallback.cpp
     models.cpp
     laserscanwidget.cpp
+    mapviewer.cpp
     )
 
 add_executable(${PROJECT_NAME}

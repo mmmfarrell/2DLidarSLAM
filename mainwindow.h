@@ -15,6 +15,7 @@ class OSGWidget;
 class QTimerEvent;
 class QDockWidget;
 class LaserScanWidget;
+class MapViewer;
 
 namespace Ui
 {
@@ -41,6 +42,9 @@ protected:
 
   QDockWidget *laser_scan_dock_widget_{ nullptr };
   LaserScanWidget* laser_scan_widget_{ nullptr };
+
+  QDockWidget *map_dock_widget_{ nullptr };
+  MapViewer* map_view_widget_{ nullptr };
 
   std::unique_ptr<robo::Robot> robot_{ nullptr };
 

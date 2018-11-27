@@ -4,6 +4,7 @@
 #include "robot.h"
 #include "laserscanner.h"
 #include "laserscanwidget.h"
+#include "mapviewer.h"
 
 #include <limits>
 
@@ -25,6 +26,11 @@ MainWindow::MainWindow(QWidget *parent) :
   this->addDockWidget(Qt::RightDockWidgetArea, laser_scan_dock_widget_);
   laser_scan_widget_ = new LaserScanWidget;
   laser_scan_dock_widget_->setWidget(laser_scan_widget_);
+
+  map_dock_widget_ = new QDockWidget("Robot Map", this);
+  this->addDockWidget(Qt::RightDockWidgetArea, map_dock_widget_);
+  map_view_widget_ = new MapViewer;
+  map_dock_widget_->setWidget(map_view_widget_);
 
   this->setupLidar();
 
