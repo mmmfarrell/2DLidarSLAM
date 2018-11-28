@@ -4,12 +4,14 @@
 #include "robot.h"
 #include "laserscanner.h"
 #include "laserscanwidget.h"
+#include "robotmapper.h"
 #include "mapviewer.h"
 
 #include <limits>
 
 #include <QDockWidget>
 #include <QKeyEvent>
+#include <QImage>
 #include <QTimerEvent>
 
 #include <QDebug> // TODO remove
@@ -18,7 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
   QMainWindow{parent},
   main_window_ui_{ new Ui::MainWindowForm },
   osg_widget_{ new OSGWidget{ this } },
-  robot_{ new robo::Robot }
+  robot_{ new robo::Robot },
+  robot_mapper_{ new robo::RobotMapper{ robot_.get() } }
 {
   main_window_ui_->setupUi(this);
 
@@ -31,6 +34,10 @@ MainWindow::MainWindow(QWidget *parent) :
   this->addDockWidget(Qt::RightDockWidgetArea, map_dock_widget_);
   map_view_widget_ = new MapViewer;
   map_dock_widget_->setWidget(map_view_widget_);
+
+  QImage map_image; // TODO preallocate?
+  robot_mapper_->getMap(map_image);
+  map_view_widget_->setImage(map_image);
 
   this->setupLidar();
 
@@ -173,4 +180,9 @@ void MainWindow::lidarTimerEvent()
   lidar_->getScan(laser_scan);
 
   laser_scan_widget_->updateLaserScan(laser_scan);
+
+  robot_mapper_->updateMap(laser_scan);
+  QImage map_image; // TODO preallocate?
+  robot_mapper_->getMap(map_image);
+  map_view_widget_->setImage(map_image);
 }

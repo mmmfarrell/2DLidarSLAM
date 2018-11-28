@@ -204,7 +204,7 @@ void OSGWidget::repaintOSGGraphicsAfterInteraction(QEvent *event)
     case QEvent::MouseButtonRelease:
     case QEvent::MouseMove:
     case QEvent::Wheel:
-      this->update();
+      //this->update(); // TODO dont update here b/c forces higher than 30hz
       break;
 
     default:

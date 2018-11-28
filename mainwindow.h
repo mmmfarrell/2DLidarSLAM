@@ -10,6 +10,7 @@
 
 #include "robot.h"
 #include "laserscanner.h"
+#include "robotmapper.h"
 
 class OSGWidget;
 class QTimerEvent;
@@ -50,6 +51,8 @@ protected:
 
   std::unique_ptr<robo::LaserScanner> lidar_{ nullptr };
   void setupLidar();
+
+  std::unique_ptr<robo::RobotMapper> robot_mapper_{ nullptr };
 
   int velocity_scale_factor_;
   const int max_vel_scale_factor_{ 5 };

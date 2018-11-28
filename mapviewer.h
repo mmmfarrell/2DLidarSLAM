@@ -4,10 +4,7 @@
 #include <QScrollArea>
 #include <QImage>
 
-class QAction;
 class QLabel;
-class QMenu;
-class QScrollBar;
 
 class MapViewer : public QScrollArea
 {
@@ -15,9 +12,9 @@ class MapViewer : public QScrollArea
 
 public:
   MapViewer();
+  void setImage(const QImage& map_image);
 
 private:
-  void setImage();
 
   QImage map;
   QLabel *mapLabel;

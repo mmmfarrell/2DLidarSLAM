@@ -34,9 +34,13 @@ add_library(RoboLib STATIC
   robot.cpp
   laserscanner.h
   laserscanner.cpp
+  robotmapper.h
+  robotmapper.cpp
   )
 target_link_libraries(RoboLib
     ${OPENSCENEGRAPH_LIBRARIES}	
+    Qt5::Widgets
+    Qt5::Gui
 )
 
 SET(MYSOURCE
