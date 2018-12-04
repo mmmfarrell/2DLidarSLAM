@@ -24,37 +24,21 @@ IF (NOT WIN32)
     SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 ENDIF()
 
-IF (NOT TARGET gtest)
-  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-  add_subdirectory(lib/googletest)
-ENDIF()
-
-add_subdirectory(lib/robolib)
-
-include_directories(
-  lib/robolib
-)
-
-SET(MYSOURCE
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindowform.ui
-    osgwidget.h
-    osgwidget.cpp
-    robotupdatecallback.cpp
-    models.cpp
-    laserscanwidget.cpp
-    mapviewer.cpp
-    )
-
-add_executable(${PROJECT_NAME}
-    ${MYSOURCE}
-    )
-
-target_link_libraries(${PROJECT_NAME}
+add_library(RoboLib STATIC
+  robot.h
+  robot.cpp
+  laserscanner.h
+  laserscanner.cpp
+  robotmapper.h
+  robotmapper.cpp
+  )
+target_link_libraries(RoboLib
     ${OPENSCENEGRAPH_LIBRARIES}	
     Qt5::Widgets
     Qt5::Gui
-    RoboLib
 )
+
+add_executable(TestRoboLib
+  test_robot.cpp
+  )
+target_link_libraries(TestRoboLib gtest gtest_main RoboLib)

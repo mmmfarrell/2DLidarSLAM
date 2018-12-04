@@ -106,5 +106,10 @@ osg::ref_ptr<osg::Node> create_maze()
   osg::Vec3d maze_translation{ 30., 5., 4. };
   maze_transform->setPosition(maze_translation);
 
+  osg::Matrixd maze_rotation_mat;
+  maze_rotation_mat.makeRotate(osg::DegreesToRadians(-4.), osg::Vec3(0, 0, 1));
+  osg::Quat maze_rotation_quat{ maze_rotation_mat.getRotate() };
+  maze_transform->setAttitude(maze_rotation_quat);
+
   return maze_transform.release();
 }
