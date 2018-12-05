@@ -12,7 +12,7 @@ struct LaserScan
   double min_angle;
   double max_angle;
   double angle_increment;
-  std::vector<float> ranges;
+  std::vector<double> ranges;
 };
 }  // namespace robo
 

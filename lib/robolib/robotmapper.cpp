@@ -30,8 +30,8 @@ void RobotMapper::updateMap(const LaserScan &laser_scan)
     for (int pix_col{ 0 }; pix_col < map_width_pixels_; pix_col++)
     {
       QPoint pix_point{ pix_row, pix_col };
-      map_log_odds_(pix_row, pix_col) = this->inverseLaserSensorModel(
-          pix_point, laser_scan);
+      map_log_odds_(pix_row, pix_col) += this->inverseLaserSensorModel(
+          pix_point, laser_scan) - log_odds_null_;
     }
   }
 }
@@ -119,10 +119,10 @@ unsigned int RobotMapper::determineClosestLaserIndex(
   double angle_from_laser_start{ angle - laser_scan.min_angle };
   double number_of_angle_increments{ angle_from_laser_start /
                                      laser_scan.angle_increment };
-  int laser_index{ std::round(number_of_angle_increments) };
+  int laser_index{ static_cast<int>(std::round(number_of_angle_increments)) };
 
   // Note: this only works if laser covers all 360 degrees around
-  int number_of_laser_returns{ laser_scan.ranges.size() };
+  int number_of_laser_returns{ static_cast<int>(laser_scan.ranges.size()) };
   while (laser_index >= number_of_laser_returns)
     laser_index -= number_of_laser_returns;
 
@@ -148,8 +148,9 @@ double RobotMapper::inverseLaserSensorModel(const QPoint &pixel_point,
   double range_to_point = sqrt(pow(robot_x - world_point.x(), 2.) +
                                pow(robot_y - world_point.y(), 2.));
   double angle_to_point =
-      atan2(-(world_point.y() - robot_y), world_point.x() - robot_x) -
+      atan2(-(world_point.y() - robot_y), world_point.x() - robot_x) +
       robot_heading;
+  angle_to_point = this->wrapAngle(angle_to_point);
 
   unsigned int closest_laser_index{ this->determineClosestLaserIndex(
       angle_to_point, laser_scan) };
@@ -164,19 +165,18 @@ double RobotMapper::inverseLaserSensorModel(const QPoint &pixel_point,
   // Beta is the width of a sensor beam
   double beta{ laser_scan.angle_increment };
 
-  double max_range_meas{ std::min(max_laser_depth_, laser_range + alpha / 2.) };
+  double max_range_meas{ std::min(laser_scan.max_range,
+                                  laser_range + alpha / 2.) };
   double angle_diff{ angle_to_point - laser_angle };
-  if (angle_diff > M_PI) // TODO move to another function
-    angle_diff -= 2 * M_PI;
-  else if (angle_diff <= -M_PI)
-    angle_diff += 2 * M_PI;
+  angle_diff = this->wrapAngle(angle_diff);
+
   double abs_angle_diff{ std::abs(angle_diff) };
 
   if ((range_to_point > max_range_meas) || (abs_angle_diff > beta / 2.))
   {
     return log_odds_null_;
   }
-  else if ((laser_range < max_laser_depth_) &&
+  else if ((laser_range < laser_scan.max_range) &&
            (abs(range_to_point - laser_range) < alpha / 2.))
   {
     return log_odds_occupied_;
@@ -196,8 +196,8 @@ double RobotMapper::logOddsToProbability(double log_odds) const
 
 void RobotMapper::convertLogOddsMapToQImage(QImage &map) const
 {
-  int rows{ map_log_odds_.rows() };
-  int cols{ map_log_odds_.cols() };
+  int rows{ static_cast<int>(map_log_odds_.rows()) };
+  int cols{ static_cast<int>(map_log_odds_.cols()) };
   map = QImage(rows, cols, QImage::Format_Grayscale8);
   map.fill(unknown_color_);
 
@@ -219,5 +219,15 @@ void RobotMapper::convertLogOddsMapToQImage(QImage &map) const
       }
     }
   }
+}
+
+double RobotMapper::wrapAngle(double angle)
+{
+  while (angle > M_PI)
+    angle -= 2 * M_PI;
+  while (angle <= -M_PI)
+    angle += 2 * M_PI;
+
+  return angle;
 }
 }  // namespace robo

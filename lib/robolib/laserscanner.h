@@ -6,6 +6,8 @@
 #include <osg/Vec3d>
 #include <osgUtil/LineSegmentIntersector>
 
+#include "laserscan.h"
+
 namespace robo
 {
 class Robot;
@@ -29,7 +31,7 @@ public:
   double getAngleIncrement() const;
   unsigned int getNumberLaserReturns() const;
 
-  void getScan(std::vector<float>& laser_scan);
+  void getScan(LaserScan& laser_scan);
 
 private:
   osg::Group *osg_scene_;
@@ -37,7 +39,8 @@ private:
   osg::ref_ptr<osgUtil::LineSegmentIntersector> line_seg_intersector_{ nullptr };
 
   const osg::Vec3d lidar_position_offset_{ 0., 0., 4. };
-  const double max_laser_depth_{ 50. };
+  const double min_laser_depth_{ 0. };
+  const double max_laser_depth_{ 30. };
   const double min_angle_rad_{ -M_PI };
   const double max_angle_rad_{ M_PI };
   const double angle_increment_{ M_PI / 60. };

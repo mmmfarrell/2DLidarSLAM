@@ -1,4 +1,5 @@
 #include "laserscanner.h"
+#include "laserscan.h"
 #include "robot.h"
 
 #include <math.h>
@@ -14,7 +15,7 @@ LaserScanner::LaserScanner(osg::Group *scene, robo::Robot *robot) :
   osg_scene_{ scene },
   robot_ptr_{ robot }
 {
-  // TODO why do I need these dummy things
+  // TODO why do I need these dummy values
   osg::Vec3d start{ 0., 0., 0. };
   osg::Vec3d end{ 4., 0., 0. };
   line_seg_intersector_ = new osgUtil::LineSegmentIntersector(start, end);
@@ -45,10 +46,15 @@ unsigned int LaserScanner::getNumberLaserReturns() const
   return this->number_laser_returns_;
 }
 
-void LaserScanner::getScan(std::vector<float>& laser_scan)
+void LaserScanner::getScan(LaserScan& laser_scan)
 {
-  if (laser_scan.size() != number_laser_returns_)
-    return; // TODO maybe throw error?
+  laser_scan.min_range = min_laser_depth_;
+  laser_scan.max_range = max_laser_depth_;
+  laser_scan.min_angle = min_angle_rad_;
+  laser_scan.max_angle = max_angle_rad_;
+  laser_scan.angle_increment = angle_increment_;
+  laser_scan.ranges.resize(number_laser_returns_,
+                           std::numeric_limits<double>::max());
 
   for (unsigned int i{ 0 }; i < number_laser_returns_; i++)
   {
@@ -63,7 +69,7 @@ void LaserScanner::getScan(std::vector<float>& laser_scan)
     double laser_angle{ min_angle_rad_ + i * angle_increment_ };
 
     double robot_heading{ robot_ptr_->getHeading() };
-    double total_heading{ robot_heading + laser_angle };
+    double total_heading{ robot_heading - laser_angle };
     double laser_x{ max_laser_depth_ * cos(total_heading) };
     double laser_y{ max_laser_depth_ * sin(total_heading) };
     osg::Vec3d laser_xy{ laser_x, laser_y, 0. };
@@ -73,7 +79,7 @@ void LaserScanner::getScan(std::vector<float>& laser_scan)
     bool contains_intersections{
       line_seg_intersector_->containsIntersections() };
 
-    double depth = std::numeric_limits<float>::max();
+    double depth = std::numeric_limits<double>::max();
 
     if (contains_intersections)
     {
@@ -82,7 +88,7 @@ void LaserScanner::getScan(std::vector<float>& laser_scan)
       depth = (first_int - laser_start).length();
     }
 
-    laser_scan[i] = depth;
+    laser_scan.ranges[i] = depth;
   }
 }
 } // namespace robo

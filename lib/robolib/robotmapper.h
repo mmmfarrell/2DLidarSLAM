@@ -40,9 +40,7 @@ public:
 
 protected:
   Robot* robot_ptr_;
-
   Eigen::MatrixXd map_log_odds_;
-  //QImage map_image_;
 
   const unsigned int map_width_meters_{ 80 };
   const unsigned int map_height_meters_{ 80 };
@@ -51,13 +49,6 @@ protected:
                                                 map_resolution_meters_) };
   const int map_height_pixels_{ static_cast<int>(map_height_meters_ /
                                                  map_resolution_meters_) };
-
-  const double max_laser_depth_{ 50. };
-  const double min_laser_angle_rad_{ -M_PI };
-  const double max_laser_angle_rad_{ M_PI };
-  const double laser_angle_increment_{ M_PI / 60. };
-  const unsigned int number_laser_returns_{ static_cast<unsigned int>(
-      (max_laser_angle_rad_ - min_laser_angle_rad_) / laser_angle_increment_) };
 
   const QRgb occupied_color_{ qRgb(0, 0, 0) };
   const QRgb unknown_color_{ qRgb(100, 100, 100) };
@@ -80,6 +71,8 @@ protected:
 
   double logOddsToProbability(double log_odds) const;
   void convertLogOddsMapToQImage(QImage &qimage_map) const;
+
+  double wrapAngle(double angle);
 };
 }  // namespace robo
 

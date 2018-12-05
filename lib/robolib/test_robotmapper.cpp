@@ -94,7 +94,7 @@ public:
   const double laser_min_angle_{ -M_PI };
   const double laser_max_angle_{ M_PI };
   const double laser_angle_increment_{ M_PI / 2. };
-  const std::vector<float> laser_ranges{ 2., 4., 10., 5. };
+  const std::vector<double> laser_ranges{ 2., 4., 10., 5. };
   RobotMapperAndSmallLaserScan() : robo::RobotMapper{ &new_robot_ }
   {
     small_laser_scan_.min_range = laser_min_range_;
@@ -164,7 +164,6 @@ TEST_F(RobotMapperAndSmallLaserScan,
 
   QImage map_image;
   this->getMap(map_image);
-  EXPECT_TRUE(map_image.save("qimage.png"));
 
   QImage true_map_image;
   true_map_image.load("../../../lib/robolib/test_artifacts/testmap.png");

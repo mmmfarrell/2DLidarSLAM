@@ -2,6 +2,7 @@
 #include "ui_mainwindowform.h"
 #include "osgwidget.h"
 #include "robot.h"
+#include "laserscan.h"
 #include "laserscanner.h"
 #include "laserscanwidget.h"
 #include "robotmapper.h"
@@ -107,11 +108,6 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 void MainWindow::setupLidar()
 {
   lidar_.reset(new robo::LaserScanner(osg_widget_->getScene(), robot_.get()));
-
-  laser_scan_widget_->setMaxLaserDepth(lidar_->getMaxDepth());
-  laser_scan_widget_->setMinLaserAngle(lidar_->getMinAngleRadians());
-  laser_scan_widget_->setMaxLaserAngle(lidar_->getMaxAngleRadians());
-  laser_scan_widget_->setLaserAngleIncrement(lidar_->getAngleIncrement());
 }
 
 void MainWindow::incrementVelocityScaleFactor()
@@ -173,13 +169,14 @@ void MainWindow::dynamicsTimerEvent()
 
 void MainWindow::lidarTimerEvent()
 {
-  unsigned int number_laser_returns{ lidar_->getNumberLaserReturns() };
-  std::vector<float> laser_scan;
-  laser_scan.resize(number_laser_returns, std::numeric_limits<float>::max());
+  //unsigned int number_laser_returns{ lidar_->getNumberLaserReturns() };
+  //std::vector<float> laser_scan;
+  //laser_scan.resize(number_laser_returns, std::numeric_limits<float>::max());
 
+  robo::LaserScan laser_scan;
   lidar_->getScan(laser_scan);
 
-  laser_scan_widget_->updateLaserScan(laser_scan);
+  //laser_scan_widget_->updateLaserScan(laser_scan);
 
   robot_mapper_->updateMap(laser_scan);
   QImage map_image; // TODO preallocate?
