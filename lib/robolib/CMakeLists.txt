@@ -40,5 +40,6 @@ target_link_libraries(RoboLib
 
 add_executable(TestRoboLib
   test_robot.cpp
+  test_robotmapper.cpp
   )
 target_link_libraries(TestRoboLib gtest gtest_main RoboLib)
