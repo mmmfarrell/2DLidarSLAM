@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
   map_view_widget_ = new MapViewer;
   map_dock_widget_->setWidget(map_view_widget_);
 
-  QImage map_image; // TODO preallocate?
+  QImage map_image;
   robot_mapper_->getMap(map_image);
   map_view_widget_->setImage(map_image);
 

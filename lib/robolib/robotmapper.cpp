@@ -5,7 +5,6 @@
 
 #include <algorithm>
 #include <math.h>
-#include <iostream> // TODO remove
 
 #include "robot.h"
 #include "robotmapper.h"

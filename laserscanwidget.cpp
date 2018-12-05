@@ -67,8 +67,8 @@ void LaserScanWidget::paintLaserScan(QPainter &painter)
     painter.translate(width() / 2., height() / 2.);
     double laser_angle{ laser_scan_.min_angle +
                         i * laser_scan_.angle_increment };
-    double laser_return_x{ laser_depth * cos(laser_angle) };
-    double laser_return_y{ laser_depth * sin(laser_angle) };
+    double laser_return_x{ laser_depth * cos(-laser_angle) };
+    double laser_return_y{ laser_depth * sin(-laser_angle) };
     painter.drawEllipse(-paint_scale_factor * laser_return_y,
                         -paint_scale_factor * laser_return_x, 5, 5);
     painter.restore();
