@@ -169,17 +169,14 @@ void MainWindow::dynamicsTimerEvent()
 
 void MainWindow::lidarTimerEvent()
 {
-  //unsigned int number_laser_returns{ lidar_->getNumberLaserReturns() };
-  //std::vector<float> laser_scan;
-  //laser_scan.resize(number_laser_returns, std::numeric_limits<float>::max());
-
   robo::LaserScan laser_scan;
   lidar_->getScan(laser_scan);
 
-  //laser_scan_widget_->updateLaserScan(laser_scan);
+  laser_scan_widget_->updateLaserScan(laser_scan);
 
   robot_mapper_->updateMap(laser_scan);
-  QImage map_image; // TODO preallocate?
+
+  QImage map_image;
   robot_mapper_->getMap(map_image);
   map_view_widget_->setImage(map_image);
 }
