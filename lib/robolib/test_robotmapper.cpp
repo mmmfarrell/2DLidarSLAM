@@ -166,7 +166,8 @@ TEST_F(RobotMapperAndSmallLaserScan,
   this->getMap(map_image);
 
   QImage true_map_image;
-  true_map_image.load("../../../lib/robolib/test_artifacts/testmap.png");
+  ASSERT_TRUE(
+      true_map_image.load("../../../lib/robolib/test_artifacts/testmap.png"));
 
   EXPECT_EQ(map_image, true_map_image);
 }
