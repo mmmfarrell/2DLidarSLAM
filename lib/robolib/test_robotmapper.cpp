@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
+
 #include <QImage>
+#include <vector>
 
 #include "robot.h"
 #include "robotmapper.h"

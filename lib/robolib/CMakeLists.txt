@@ -31,6 +31,8 @@ add_library(RoboLib STATIC
   laserscanner.cpp
   robotmapper.h
   robotmapper.cpp
+  icp.h
+  icp.cpp
   )
 target_link_libraries(RoboLib
     ${OPENSCENEGRAPH_LIBRARIES}	
@@ -39,7 +41,8 @@ target_link_libraries(RoboLib
 )
 
 add_executable(TestRoboLib
-  test_robot.cpp
-  test_robotmapper.cpp
+  #test_robot.cpp
+  #test_robotmapper.cpp
+  test_icp.cpp
   )
 target_link_libraries(TestRoboLib gtest gtest_main RoboLib)
