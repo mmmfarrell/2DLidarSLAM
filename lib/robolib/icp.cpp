@@ -40,7 +40,7 @@ void icpMatch(Eigen::MatrixXd &prev_points, Eigen::MatrixXd &curr_points,
     curr_points = (R * curr_points).colwise() + t;
     updateHomogeneousMatrix(H, R, t);
 
-    double error{ calculateTotalDistanceError(prev_points, curr_points) };
+    double error{ calculateTotalDistanceError(algined_prev_points, curr_points) };
     d_error = abs(prev_error - error);
     prev_error = error;
 
@@ -96,10 +96,10 @@ void updateHomogeneousMatrix(Eigen::Matrix3d &H, const Eigen::Matrix2d &R,
   H = H * H_change;
 }
 
-double calculateTotalDistanceError(Eigen::MatrixXd &prev_points,
+double calculateTotalDistanceError(Eigen::MatrixXd &aligned_prev_points,
                                    Eigen::MatrixXd &curr_points)
 {
-  Eigen::MatrixXd difference_points{ prev_points - curr_points };
+  Eigen::MatrixXd difference_points{ aligned_prev_points - curr_points };
   Eigen::MatrixXd distance_errors{ difference_points.colwise().norm() };
   double sum_dist_errors{ distance_errors.sum() };
 
@@ -109,18 +109,19 @@ double calculateTotalDistanceError(Eigen::MatrixXd &prev_points,
 Eigen::MatrixXd nearestNeighborAssociation(const Eigen::MatrixXd &prev_points,
                                            const Eigen::MatrixXd &curr_points)
 {
-  int number_of_points{ static_cast<int>(prev_points.cols()) };
-  Eigen::MatrixXd aligned_prev_points(2, number_of_points);
+  int num_prev_points{ static_cast<int>(prev_points.cols()) };
+  int num_curr_points{ static_cast<int>(curr_points.cols()) };
+  Eigen::MatrixXd aligned_prev_points(2, num_curr_points);
 
   // Loop through curr_points
-  for (int i{ 0 }; i < number_of_points; i++)
+  for (int i{ 0 }; i < num_curr_points; i++)
   {
     int min_index{ -1 };
     double min_distance{ std::numeric_limits<double>::max() };
 
     // Loop through all prev_points and find the point that is closest to the
     // point in curr_points
-    for (int j{ 0 }; j < number_of_points; j++)
+    for (int j{ 0 }; j < num_prev_points; j++)
     {
       double distance{
         (prev_points.block<2, 1>(0, j) - curr_points.block<2, 1>(0, i)).norm() };

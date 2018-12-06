@@ -159,3 +159,37 @@ TEST_F(
   EXPECT_NEAR(rotation_angle, true_rotation_angle, abs_tolerance);
   EXPECT_NEAR_T_VEC(t_out_, true_translation_vector, abs_tolerance);
 }
+
+TEST_F(
+    SmallSetOfPoints,
+    differentNumberOfPointsComputeICP_ReturnsCorrectRotationAndTranslation)
+{
+  Eigen::MatrixXd prev_points;
+  prev_points = small_point_set_;
+
+  int num_prev_points{ static_cast<int>(prev_points.cols()) };
+  int num_less_curr_points{ 1 };
+  int num_curr_points{ num_prev_points - num_less_curr_points };
+  Eigen::MatrixXd curr_points{ 2, num_curr_points };
+  for (int i{ 0 }; i < num_curr_points; i++)
+  {
+    curr_points.block<2, 1>(0, i) =
+        prev_points.block<2, 1>(0, num_prev_points - 1 - i);
+  }
+
+  Eigen::Matrix2d true_rotation_matrix;
+  double true_rotation_angle{ -0.01 };
+  robo::angleTo2DRotationMatrix(-true_rotation_angle, true_rotation_matrix);
+  curr_points = true_rotation_matrix * curr_points;
+
+  Eigen::Vector2d true_translation_vector;
+  true_translation_vector << 0.2, -0.1;
+  curr_points.colwise() -= true_translation_vector;
+
+  robo::icpMatch(prev_points, curr_points, R_out_, t_out_);
+  double rotation_angle{ robo::twoDRotationMatToAngle(R_out_) };
+
+  double abs_tolerance{ 1.e-2 };
+  EXPECT_NEAR(rotation_angle, true_rotation_angle, abs_tolerance);
+  EXPECT_NEAR_T_VEC(t_out_, true_translation_vector, abs_tolerance);
+}
