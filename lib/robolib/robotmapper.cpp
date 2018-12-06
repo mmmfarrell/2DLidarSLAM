@@ -208,14 +208,9 @@ void RobotMapper::convertLogOddsMapToQImage(QImage &map) const
       double probability_occupied{ this->logOddsToProbability(
           log_odds_map_value) };
 
-      if (probability_occupied > 0.5)
-      {
-        map.setPixel(QPoint(row, col), occupied_color_);
-      }
-      else if (probability_occupied < 0.5)
-      {
-        map.setPixel(QPoint(row, col), free_color_);
-      }
+      int gray_pixel_val{ static_cast<int>(255 - 255 * probability_occupied) };
+      map.setPixel(QPoint(row, col),
+                   qRgb(gray_pixel_val, gray_pixel_val, gray_pixel_val));
     }
   }
 }

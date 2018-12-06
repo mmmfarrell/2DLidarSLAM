@@ -51,12 +51,12 @@ protected:
                                                  map_resolution_meters_) };
 
   const QRgb occupied_color_{ qRgb(0, 0, 0) };
-  const QRgb unknown_color_{ qRgb(100, 100, 100) };
+  const QRgb unknown_color_{ qRgb(127, 127, 127) };
   const QRgb free_color_{ qRgb(255, 255, 255) };
 
   const double log_odds_null_{ 0. };
-  const double log_odds_occupied_{ 1. };
-  const double log_odds_free_{ -1. };
+  const double log_odds_occupied_{ 0.2 };
+  const double log_odds_free_{ -0.2 };
 
   const float map_origin_x_{ 70. };
   const float map_origin_y_{ 45. };
