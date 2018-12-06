@@ -135,7 +135,7 @@ void MainWindow::initKeysPressedMap()
 void MainWindow::handlePressedKeys()
 {
   double desired_velocity{ 0.0 };
-  double base_velocity{ 1.0 };
+  double base_velocity{ 2.0 };
   if (keys_pressed_map_[Qt::Key_Up])
     desired_velocity = base_velocity * velocity_scale_factor_;
   else if (keys_pressed_map_[Qt::Key_Down])
@@ -143,7 +143,7 @@ void MainWindow::handlePressedKeys()
   robot_->setDesiredVelocity(desired_velocity);
 
   double desired_omega{ 0.0 };
-  double base_omega{ 0.25 };
+  double base_omega{ 0.4 };
   if (keys_pressed_map_[Qt::Key_Right])
     desired_omega = -base_omega * velocity_scale_factor_;
   else if (keys_pressed_map_[Qt::Key_Left])

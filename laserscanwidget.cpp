@@ -1,8 +1,11 @@
 #include "laserscanwidget.h"
 
+#include "roboutils.h"
+
 #include <limits>
 #include <math.h>
 
+#include <Eigen/Core>
 #include <QPainter>
 #include <QPalette>
 
@@ -56,19 +59,16 @@ void LaserScanWidget::paintLaserScan(QPainter &painter)
   painter.setPen(Qt::red);
   painter.setBrush(Qt::red);
 
-  for (unsigned int i{ 0 }; i < laser_scan_.ranges.size(); i++)
+  Eigen::MatrixXd laser_points;
+  robo::laserScanToPoints(laser_scan_, laser_points);
+  unsigned int num_laser_points{ laser_points.cols() };
+
+  for (unsigned int i{ 0 }; i < num_laser_points; i++)
   {
-    double laser_depth{ laser_scan_.ranges[i] };
-
-    if (laser_depth > laser_scan_.max_range)
-      continue;
-
     painter.save();
     painter.translate(width() / 2., height() / 2.);
-    double laser_angle{ laser_scan_.min_angle +
-                        i * laser_scan_.angle_increment };
-    double laser_return_x{ laser_depth * cos(-laser_angle) };
-    double laser_return_y{ laser_depth * sin(-laser_angle) };
+    double laser_return_x{ laser_points(0, i) };
+    double laser_return_y{ laser_points(1, i) };
     painter.drawEllipse(-paint_scale_factor * laser_return_y,
                         -paint_scale_factor * laser_return_x, 5, 5);
     painter.restore();
