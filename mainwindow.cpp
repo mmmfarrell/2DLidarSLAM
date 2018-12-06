@@ -8,6 +8,9 @@
 #include "robotmapper.h"
 #include "mapviewer.h"
 
+#include "icp.h"
+#include "roboutils.h"
+
 #include <limits>
 
 #include <QDockWidget>
@@ -16,6 +19,7 @@
 #include <QTimerEvent>
 
 #include <QDebug> // TODO remove
+#include <iostream> // TODO remove
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow{parent},
@@ -179,4 +183,21 @@ void MainWindow::lidarTimerEvent()
   QImage map_image;
   robot_mapper_->getMap(map_image);
   map_view_widget_->setImage(map_image);
+
+  Eigen::MatrixXd raw_curr_lidar_points; // TODO make functions const
+  robo::laserScanToPoints(laser_scan, curr_lidar_points);
+  raw_curr_lidar_points = curr_lidar_points;
+
+  if (prev_lidar_points.rows() != 0)
+  {
+    Eigen::Matrix2d R;
+    R.setIdentity();
+    Eigen::Vector2d t;
+    t.setZero();
+    robo::icpMatch(prev_lidar_points, curr_lidar_points, R, t);
+    qDebug() << "t: ";
+    qDebug() << t(0) << " " << t(1);
+  }
+  
+  prev_lidar_points = raw_curr_lidar_points;
 }

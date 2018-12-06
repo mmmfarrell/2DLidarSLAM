@@ -54,6 +54,9 @@ protected:
 
   std::unique_ptr<robo::RobotMapper> robot_mapper_{ nullptr };
 
+  Eigen::MatrixXd prev_lidar_points;
+  Eigen::MatrixXd curr_lidar_points;
+
   int velocity_scale_factor_;
   const int max_vel_scale_factor_{ 5 };
   void incrementVelocityScaleFactor();
@@ -70,7 +73,7 @@ protected:
   void dynamicsTimerEvent();
 
   int lidar_timer_id_;
-  const double lidar_rate_hz_{ 10.0 };
+  const double lidar_rate_hz_{ 5.0 };
   void lidarTimerEvent();
 };
 

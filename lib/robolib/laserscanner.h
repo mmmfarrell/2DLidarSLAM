@@ -43,7 +43,7 @@ private:
   const double max_laser_depth_{ 30. };
   const double min_angle_rad_{ -M_PI };
   const double max_angle_rad_{ M_PI };
-  const double angle_increment_{ M_PI / 60. };
+  const double angle_increment_{ M_PI / 30. };
   const unsigned int number_laser_returns_{ static_cast<unsigned int>(
       (max_angle_rad_ - min_angle_rad_) / angle_increment_) };
 };
