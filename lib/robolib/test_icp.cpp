@@ -5,18 +5,11 @@
 
 #include "icp.h"
 
-void EXPECT_EQ_T_VEC(const Eigen::Vector2d& tvec1, const Eigen::Vector2d& tvec2)
+void EXPECT_NEAR_T_VEC(const Eigen::Vector2d &tvec1,
+                       const Eigen::Vector2d &tvec2, double abs_tolerance)
 {
-  EXPECT_DOUBLE_EQ(tvec1(0), tvec2(0));
-  EXPECT_DOUBLE_EQ(tvec1(1), tvec2(1));
-}
-
-void EXPECT_EQ_R_MAT(const Eigen::Matrix2d& rmat1, const Eigen::Matrix2d& rmat2)
-{
-  EXPECT_DOUBLE_EQ(rmat1(0, 0), rmat2(0, 0));
-  EXPECT_DOUBLE_EQ(rmat1(0, 1), rmat2(0, 1));
-  EXPECT_DOUBLE_EQ(rmat1(1, 0), rmat2(1, 0));
-  EXPECT_DOUBLE_EQ(rmat1(1, 1), rmat2(1, 1));
+  EXPECT_NEAR(tvec1(0), tvec2(0), abs_tolerance);
+  EXPECT_NEAR(tvec1(1), tvec2(1), abs_tolerance);
 }
 
 class SmallSetOfPoints : public ::testing::Test
@@ -49,7 +42,6 @@ TEST_F(
     SmallSetOfPoints,
     noRotationOrTranslationComputeICP_ReturnsIdentityRotationAndNoTranslation)
 {
-  // TODO perfect associativity
   Eigen::MatrixXd points2;
   points2 = small_point_set_;
   robo::icpMatch(small_point_set_, points2, R_out_, t_out_);
@@ -67,7 +59,6 @@ TEST_F(
 TEST_F(SmallSetOfPoints,
        onlyTranslationComputeICP_ReturnsIdentityRotationAndCorrectTranslation)
 {
-  // TODO perfect associativity
   Eigen::MatrixXd prev_points;
   prev_points = small_point_set_;
 
@@ -75,22 +66,21 @@ TEST_F(SmallSetOfPoints,
   curr_points = small_point_set_;
 
   Eigen::Vector2d true_translation_vector;
-  true_translation_vector << 1., -2;
+  true_translation_vector << 0.1, -0.2;
   curr_points.colwise() -= true_translation_vector;
+  double true_rotation_angle{ 0. };
 
-  robo::svdMotionEstimation(prev_points, curr_points, R_out_, t_out_);
+  robo::icpMatch(prev_points, curr_points, R_out_, t_out_);
+  double rotation_angle{ robo::twoDRotationMatToAngle(R_out_) };
 
-  Eigen::Matrix2d true_rotation_matrix;
-  true_rotation_matrix.setIdentity();
-
-  EXPECT_EQ_R_MAT(R_out_, true_rotation_matrix);
-  EXPECT_EQ_T_VEC(t_out_, true_translation_vector);
+  double abs_tolerance{ 1.e-5 };
+  EXPECT_NEAR(rotation_angle, true_rotation_angle, abs_tolerance);
+  EXPECT_NEAR_T_VEC(t_out_, true_translation_vector, abs_tolerance);
 }
 
 TEST_F(SmallSetOfPoints,
        onlyRotationComputeICP_ReturnsCorrectRotationAndNoTranslation)
 {
-  // TODO perfect associativity
   Eigen::MatrixXd prev_points;
   prev_points = small_point_set_;
 
@@ -98,17 +88,74 @@ TEST_F(SmallSetOfPoints,
   curr_points = small_point_set_;
 
   Eigen::Matrix2d true_rotation_matrix;
-  double rotation_angle{ 0.1 };
-  robo::angleTo2DRotationMatrix(rotation_angle, true_rotation_matrix);
-  //curr_points.colwise() *= true_rotation_matrix;
+  double true_rotation_angle{ 0.1 };
+  robo::angleTo2DRotationMatrix(-true_rotation_angle, true_rotation_matrix);
   curr_points = true_rotation_matrix * curr_points;
 
-  robo::svdMotionEstimation(prev_points, curr_points, R_out_, t_out_);
+  robo::icpMatch(prev_points, curr_points, R_out_, t_out_);
+  double rotation_angle{ robo::twoDRotationMatToAngle(R_out_) };
 
   Eigen::Vector2d true_translation_vector;
   true_translation_vector.setZero();
 
-  EXPECT_EQ_R_MAT(R_out_, true_rotation_matrix);
-  EXPECT_EQ_T_VEC(t_out_, true_translation_vector);
+  double abs_tolerance{ 1.e-5 };
+  EXPECT_NEAR(rotation_angle, true_rotation_angle, abs_tolerance);
+  EXPECT_NEAR_T_VEC(t_out_, true_translation_vector, abs_tolerance);
 }
 
+TEST_F(SmallSetOfPoints,
+       rotateAndTranslatePointsComputeICP_ReturnsCorrectRotationAndTranslation)
+{
+  Eigen::MatrixXd prev_points;
+  prev_points = small_point_set_;
+
+  Eigen::MatrixXd curr_points;
+  curr_points = small_point_set_;
+
+  Eigen::Matrix2d true_rotation_matrix;
+  double true_rotation_angle{ -0.01 };
+  robo::angleTo2DRotationMatrix(-true_rotation_angle, true_rotation_matrix);
+  curr_points = true_rotation_matrix * curr_points;
+
+  Eigen::Vector2d true_translation_vector;
+  true_translation_vector << 0.2, -0.1;
+  curr_points.colwise() -= true_translation_vector;
+
+  robo::icpMatch(prev_points, curr_points, R_out_, t_out_);
+  double rotation_angle{ robo::twoDRotationMatToAngle(R_out_) };
+
+  double abs_tolerance{ 1.e-2 };
+  EXPECT_NEAR(rotation_angle, true_rotation_angle, abs_tolerance);
+  EXPECT_NEAR_T_VEC(t_out_, true_translation_vector, abs_tolerance);
+}
+
+TEST_F(
+    SmallSetOfPoints,
+    mixUpRotateAndTranslatePointsComputeICP_ReturnsCorrectRotationAndTranslation)
+{
+  Eigen::MatrixXd prev_points;
+  prev_points = small_point_set_;
+
+  int number_of_points{ static_cast<int>(prev_points.cols()) };
+  Eigen::MatrixXd curr_points{ 2, number_of_points };
+  for (int i{ 0 }; i < number_of_points; i++)
+  {
+    curr_points.block<2, 1>(0, i) = prev_points.block<2, 1>(0, number_of_points - 1 - i);
+  }
+
+  Eigen::Matrix2d true_rotation_matrix;
+  double true_rotation_angle{ -0.01 };
+  robo::angleTo2DRotationMatrix(-true_rotation_angle, true_rotation_matrix);
+  curr_points = true_rotation_matrix * curr_points;
+
+  Eigen::Vector2d true_translation_vector;
+  true_translation_vector << 0.2, -0.1;
+  curr_points.colwise() -= true_translation_vector;
+
+  robo::icpMatch(prev_points, curr_points, R_out_, t_out_);
+  double rotation_angle{ robo::twoDRotationMatToAngle(R_out_) };
+
+  double abs_tolerance{ 1.e-2 };
+  EXPECT_NEAR(rotation_angle, true_rotation_angle, abs_tolerance);
+  EXPECT_NEAR_T_VEC(t_out_, true_translation_vector, abs_tolerance);
+}
