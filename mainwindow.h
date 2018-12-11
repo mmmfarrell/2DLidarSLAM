@@ -11,6 +11,7 @@
 #include "robot.h"
 #include "laserscanner.h"
 #include "robotmapper.h"
+#include "slam2d.h"
 
 class OSGWidget;
 class QTimerEvent;
@@ -47,15 +48,16 @@ protected:
   QDockWidget *map_dock_widget_{ nullptr };
   MapViewer* map_view_widget_{ nullptr };
 
+  QDockWidget *slam_dock_widget_{ nullptr };
+  MapViewer* slam_view_widget_{ nullptr };
+
   std::unique_ptr<robo::Robot> robot_{ nullptr };
 
   std::unique_ptr<robo::LaserScanner> lidar_{ nullptr };
   void setupLidar();
 
   std::unique_ptr<robo::RobotMapper> robot_mapper_{ nullptr };
-
-  Eigen::MatrixXd prev_lidar_points;
-  Eigen::MatrixXd curr_lidar_points;
+  robo::Slam2D slammer_;
 
   int velocity_scale_factor_;
   const int max_vel_scale_factor_{ 5 };
@@ -73,7 +75,7 @@ protected:
   void dynamicsTimerEvent();
 
   int lidar_timer_id_;
-  const double lidar_rate_hz_{ 5.0 };
+  const double lidar_rate_hz_{ 20.0 };
   void lidarTimerEvent();
 };
 

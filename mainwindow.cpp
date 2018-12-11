@@ -44,6 +44,14 @@ MainWindow::MainWindow(QWidget *parent) :
   robot_mapper_->getMap(map_image);
   map_view_widget_->setImage(map_image);
 
+  slam_dock_widget_ = new QDockWidget("SLAM Map", this);
+  this->addDockWidget(Qt::RightDockWidgetArea, slam_dock_widget_);
+  slam_view_widget_ = new MapViewer;
+  slam_dock_widget_->setWidget(slam_view_widget_);
+
+  slammer_.getMap(map_image);
+  slam_view_widget_->setImage(map_image);
+
   this->setupLidar();
 
   osg_widget_->displayRobot(robot_.get());
@@ -169,6 +177,12 @@ void MainWindow::dynamicsTimerEvent()
 
   double robot_dynamics_rate_s{ 1. / robot_dynamics_rate_hz_ };
   robot_->propagateDynamics(robot_dynamics_rate_s);
+
+  double dt{ 1. / this->robot_dynamics_rate_hz_ };
+  double robot_vel{ robot_->getVelocity() };
+  double robot_omega{ robot_->getOmega() };
+
+  slammer_.updateRobotPoseEstimate(robot_vel, robot_omega, dt);
 }
 
 void MainWindow::lidarTimerEvent()
@@ -184,20 +198,7 @@ void MainWindow::lidarTimerEvent()
   robot_mapper_->getMap(map_image);
   map_view_widget_->setImage(map_image);
 
-  Eigen::MatrixXd raw_curr_lidar_points; // TODO make functions const
-  robo::laserScanToPoints(laser_scan, curr_lidar_points);
-  raw_curr_lidar_points = curr_lidar_points;
-
-  if (prev_lidar_points.rows() != 0)
-  {
-    Eigen::Matrix2d R;
-    R.setIdentity();
-    Eigen::Vector2d t;
-    t.setZero();
-    robo::icpMatch(prev_lidar_points, curr_lidar_points, R, t);
-    qDebug() << "t: ";
-    qDebug() << t(0) << " " << t(1);
-  }
-  
-  prev_lidar_points = raw_curr_lidar_points;
+  slammer_.updateMap(laser_scan);
+  slammer_.getMap(map_image);
+  slam_view_widget_->setImage(map_image);
 }
