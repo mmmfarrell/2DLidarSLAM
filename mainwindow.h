@@ -75,7 +75,7 @@ protected:
   void dynamicsTimerEvent();
 
   int lidar_timer_id_;
-  const double lidar_rate_hz_{ 10.0 };
+  const double lidar_rate_hz_{ 5.0 };
   void lidarTimerEvent();
 };
 

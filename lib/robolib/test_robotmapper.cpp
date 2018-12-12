@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <QImage>
+#include <QColor>
 #include <vector>
 
 #include "robot.h"
@@ -136,7 +137,7 @@ TEST_F(RobotMapperAndSmallLaserScan,
 TEST_F(RobotMapperAndSmallLaserScan,
        inveseLaserSensorModelOfFreeSpace_ReturnsLogOddsFreeValue)
 {
-  int pixel_point_x{ 46 };
+  int pixel_point_x{ 45 };
   int pixel_point_y{ 68 };
   QPoint pixel_point{ pixel_point_x, pixel_point_y };
 
@@ -160,16 +161,20 @@ TEST_F(RobotMapperAndSmallLaserScan,
 }
 
 TEST_F(RobotMapperAndSmallLaserScan,
-       updateMapWithLaserScan_NewMapIsCorrect)
+       updateMapWithLaserScan_ReturnsColorCorrespondingToOccupiedPoint)
 {
   this->updateMap(small_laser_scan_);
 
   QImage map_image;
   this->getMap(map_image);
+  int occupied_pixel_point_x{ 41 };
+  int occupied_pixel_point_y{ 70 };
+  QRgb occupied_pixel_rgb{ map_image.pixel(occupied_pixel_point_x,
+                                           occupied_pixel_point_y) };
+  int occupied_pixel_gray_val{ qGray(occupied_pixel_rgb) };
 
-  QImage true_map_image;
-  ASSERT_TRUE(
-      true_map_image.load("../../../lib/robolib/test_artifacts/testmap.png"));
+  QRgb unknown_rgb{ this->getUnknownColor() };
+  int unknown_gray_val{ qGray(unknown_rgb) };
 
-  EXPECT_EQ(map_image, true_map_image);
+  EXPECT_LT(occupied_pixel_gray_val, unknown_gray_val);
 }

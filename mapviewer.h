@@ -12,6 +12,8 @@ class MapViewer : public QScrollArea
 
 public:
   MapViewer();
+  QSize minimumSizeHint() const override;
+  QSize sizeHint() const override;
   void setImage(const QImage& map_image);
 
 private:

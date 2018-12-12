@@ -23,7 +23,7 @@ QSize LaserScanWidget::minimumSizeHint() const
 
 QSize LaserScanWidget::sizeHint() const
 {
-  return QSize(400, 200);
+  return QSize(400, 400);
 }
 
 void LaserScanWidget::updateLaserScan(robo::LaserScan& new_scan)
@@ -61,7 +61,8 @@ void LaserScanWidget::paintLaserScan(QPainter &painter)
 
   Eigen::MatrixXd laser_points;
   robo::laserScanToPoints(laser_scan_, laser_points);
-  unsigned int num_laser_points{ laser_points.cols() };
+  unsigned int num_laser_points{ static_cast<unsigned int>(
+      laser_points.cols()) };
 
   for (unsigned int i{ 0 }; i < num_laser_points; i++)
   {

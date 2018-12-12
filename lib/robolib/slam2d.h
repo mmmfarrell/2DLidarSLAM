@@ -32,6 +32,7 @@ public:
 
 protected:
   robo::Grid2D grid_map_;
+  Eigen::MatrixXd point_cloud_;
   Eigen::Vector3d robot_pose_;
   robo::CeresScanMatcher scan_matcher_;
   ceres::Solver::Summary ceres_summary_;

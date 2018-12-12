@@ -24,11 +24,6 @@ IF (NOT WIN32)
     SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 ENDIF()
 
-IF (NOT TARGET gtest)
-  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-  add_subdirectory(lib/googletest)
-ENDIF()
-
 add_subdirectory(lib/robolib)
 
 include_directories(

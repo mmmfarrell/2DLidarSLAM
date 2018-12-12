@@ -31,12 +31,12 @@ MainWindow::MainWindow(QWidget *parent) :
   main_window_ui_->setupUi(this);
 
   laser_scan_dock_widget_ = new QDockWidget("Raw Laser Scan Data", this);
-  this->addDockWidget(Qt::RightDockWidgetArea, laser_scan_dock_widget_);
+  this->addDockWidget(Qt::BottomDockWidgetArea, laser_scan_dock_widget_);
   laser_scan_widget_ = new LaserScanWidget;
   laser_scan_dock_widget_->setWidget(laser_scan_widget_);
 
   map_dock_widget_ = new QDockWidget("Robot Map", this);
-  this->addDockWidget(Qt::RightDockWidgetArea, map_dock_widget_);
+  this->addDockWidget(Qt::BottomDockWidgetArea, map_dock_widget_);
   map_view_widget_ = new MapViewer;
   map_dock_widget_->setWidget(map_view_widget_);
 
@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
   map_view_widget_->setImage(map_image);
 
   slam_dock_widget_ = new QDockWidget("SLAM Map", this);
-  this->addDockWidget(Qt::RightDockWidgetArea, slam_dock_widget_);
+  this->addDockWidget(Qt::BottomDockWidgetArea, slam_dock_widget_);
   slam_view_widget_ = new MapViewer;
   slam_dock_widget_->setWidget(slam_view_widget_);
 

@@ -20,7 +20,7 @@ TEST(NewSlam2DInstance, getMap_MapAllUnknown)
   EXPECT_EQ(map, true_map);
 }
 
-class SmallLaserScanTest : public ::testing::Test
+class SlamSmallLaserScanTest : public ::testing::Test
 {
 public:
   robo::LaserScan small_laser_scan_;
@@ -31,11 +31,10 @@ public:
   const double laser_min_angle_{ -M_PI };
   const double laser_max_angle_{ M_PI };
   const double laser_angle_increment_{ M_PI / 2. };
-  //const std::vector<double> laser_ranges{ 60., 4., 60., 5. };
   const std::vector<double> laser_ranges{ 3., 4., 2., 5. };
 
   const int num_updates{ 10 };
-  SmallLaserScanTest()
+  SlamSmallLaserScanTest()
   {
     small_laser_scan_.min_range = laser_min_range_;
     small_laser_scan_.max_range = laser_max_range_;
@@ -51,37 +50,37 @@ public:
   }
 };
 
-TEST_F(SmallLaserScanTest, getMap_ReturnsCorrectMap)
+TEST_F(SlamSmallLaserScanTest,
+       getMap_OccupiedSpaceReturnsColorCorrespondingToOccupied)
 {
   QImage map;
   slammer_.getMap(map);
-  //map.save("qimage.png");
 
-  QImage true_map{ 80, 80, QImage::Format_Grayscale8 };
-  true_map.fill(slammer_.getUnknownColor());
+  int occupied_pixel_point_x{ 41 };
+  int occupied_pixel_point_y{ 70 };
+  QRgb occupied_pixel_rgb{ map.pixel(occupied_pixel_point_x,
+                                           occupied_pixel_point_y) };
+  int occupied_pixel_gray_val{ qGray(occupied_pixel_rgb) };
 
-  EXPECT_EQ(map, true_map);
+  QRgb unknown_rgb{ slammer_.getUnknownColor() };
+  int unknown_gray_val{ qGray(unknown_rgb) };
+
+  EXPECT_LT(occupied_pixel_gray_val, unknown_gray_val);
 }
 
-TEST_F(SmallLaserScanTest, moveRobotAndUpdate_ReturnsCorrectMap)
+TEST_F(SlamSmallLaserScanTest, getMap_FreeSpaceReturnsColorCorrespondingToFree)
 {
-  //double robot_vel{ 1.0 };
-  //double robot_omega{ 0.0 };
-  //double dt{ 0.1 };
-  //int num_steps{ 100 };
+  QImage map;
+  slammer_.getMap(map);
 
-  //for (int i{ 0 }; i < num_steps; i++)
-  //{
-    //slammer_.updateRobotPoseEstimate(robot_vel, robot_omega, dt);
-    //slammer_.updateMap(small_laser_scan_);
-  //}
+  int occupied_pixel_point_x{ 44 };
+  int occupied_pixel_point_y{ 70 };
+  QRgb occupied_pixel_rgb{ map.pixel(occupied_pixel_point_x,
+                                           occupied_pixel_point_y) };
+  int occupied_pixel_gray_val{ qGray(occupied_pixel_rgb) };
 
-  //QImage map;
-  //slammer_.getMap(map);
-  ////map.save("qimage.png");
+  QRgb unknown_rgb{ slammer_.getUnknownColor() };
+  int unknown_gray_val{ qGray(unknown_rgb) };
 
-  //QImage true_map{ 80, 80, QImage::Format_Grayscale8 };
-  //true_map.fill(slammer_.getUnknownColor());
-
-  //EXPECT_EQ(map, true_map);
+  EXPECT_GT(occupied_pixel_gray_val, unknown_gray_val);
 }

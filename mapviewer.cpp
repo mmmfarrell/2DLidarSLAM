@@ -8,7 +8,7 @@
 
 #include "mapviewer.h"
 
-MapViewer::MapViewer() : mapLabel(new QLabel), scaleFactor(1)
+MapViewer::MapViewer() : mapLabel(new QLabel)
 {
   mapLabel->setBackgroundRole(QPalette::Base);
   mapLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -19,10 +19,19 @@ MapViewer::MapViewer() : mapLabel(new QLabel), scaleFactor(1)
   this->setVisible(false);
 }
 
+QSize MapViewer::minimumSizeHint() const
+{
+  return QSize(100, 100);
+}
+
+QSize MapViewer::sizeHint() const
+{
+  return QSize(400, 400);
+}
+
 void MapViewer::setImage(const QImage& map_image)
 {
   mapLabel->setPixmap(QPixmap::fromImage(map_image));
-  scaleFactor = 1.0;
 
   this->setVisible(true);
   this->setWidgetResizable(true);

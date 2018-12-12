@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.4)
-project(FinalProject)
+project(RoboLib)
 
 FIND_PACKAGE(Qt5Widgets)
 FIND_PACKAGE(Qt5Gui)
 FIND_PACKAGE(OpenSceneGraph REQUIRED COMPONENTS
     osgDB osgGA osgUtil osgViewer osgText)
 find_package(Eigen3 REQUIRED)
+find_package(Ceres REQUIRED)
 
 INCLUDE_DIRECTORIES(
   ${OPENSCENEGRAPH_INCLUDE_DIRS}
@@ -24,7 +25,11 @@ IF (NOT WIN32)
     SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 ENDIF()
 
-find_package(Ceres REQUIRED)
+IF (NOT TARGET gtest)
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  add_subdirectory(lib/googletest)
+ENDIF()
+
 include_directories(${CERES_INCLUDE_DIRS})
 
 add_library(RoboLib STATIC
@@ -54,11 +59,11 @@ target_link_libraries(RoboLib
 )
 
 add_executable(TestRoboLib
-  #test_robot.cpp
-  #test_robotmapper.cpp
-  #test_icp.cpp
-  #test_roboutils.cpp
-  #test_grid2d.cpp
+  test_robot.cpp
+  test_robotmapper.cpp
+  test_icp.cpp
+  test_roboutils.cpp
+  test_grid2d.cpp
   test_ceres_scan_matcher.cpp
   test_slam2d.cpp
   )

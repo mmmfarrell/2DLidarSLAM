@@ -39,21 +39,15 @@ void Slam2D::updateMap(const LaserScan &laser_scan)
 {
   if (!first_update_)
   {
-    Eigen::MatrixXd point_cloud;
-    robo::laserScanToPoints(laser_scan, point_cloud);
-    Eigen::Vector3d pose_estimate;
-    scan_matcher_.Match(robot_pose_, point_cloud, grid_map_, pose_estimate,
+    robo::laserScanToPoints(laser_scan, point_cloud_);
+    scan_matcher_.Match(robot_pose_, point_cloud_, grid_map_, robot_pose_,
                         &ceres_summary_);
-    //std::cout << "pose est: " << std::endl << pose_estimate << std::endl;
-    robot_pose_ = pose_estimate;
   }
   for (int pix_row{ 0 }; pix_row < grid_map_.getMapPixelRows(); pix_row++)
   {
     for (int pix_col{ 0 }; pix_col < grid_map_.getMapPixelCols(); pix_col++)
     {
       QPoint pix_point{ pix_row, pix_col };
-      //map_log_odds_(pix_row, pix_col) += this->inverseLaserSensorModel(
-          //pix_point, laser_scan) - log_odds_null_;
       double meas_model{ this->inverseLaserSensorModel(pix_point, laser_scan) -
                          log_odds_null_ };
       grid_map_.addLogOdds(pix_point, meas_model);
@@ -133,7 +127,6 @@ double Slam2D::inverseLaserSensorModel(const QPoint &pixel_point,
   double alpha{ grid_map_.getMapResolution() };
 
   // Beta is the width of a sensor beam
-  //double beta{ laser_scan.angle_increment };
   double beta{ 0.05 };
 
   double max_range_meas{ std::min(laser_scan.max_range,

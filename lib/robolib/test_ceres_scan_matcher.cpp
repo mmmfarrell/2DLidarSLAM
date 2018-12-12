@@ -38,6 +38,10 @@ protected:
 
     scan_matcher_.Match(initial_pose_estimate, single_point_set_, grid_,
                         final_pose_estimate, &summary);
+
+    double abs_tolerance{ 0.1 };
+    EXPECT_NEAR(final_pose_estimate(0), true_x_diff, abs_tolerance);
+    EXPECT_NEAR(final_pose_estimate(1), true_y_diff, abs_tolerance);
   }
 };
 
@@ -48,15 +52,15 @@ TEST_F(CeresSinglePointTest, startAtPerfectPose_ConvergesToCorrectPose)
 
 TEST_F(CeresSinglePointTest, startAtXError_ConvergesToCorrectPose)
 {
-  this->testFromInitialPose(-0.3, 0.5);
+  this->testFromInitialPose(-0.45, 0.5);
 }
 
 TEST_F(CeresSinglePointTest, startAtYError_ConvergesToCorrectPose)
 {
-  this->testFromInitialPose(-0.5, 0.3);
+  this->testFromInitialPose(-0.5, 0.45);
 }
 
 TEST_F(CeresSinglePointTest, startAtXYError_ConvergesToCorrectPose)
 {
-  this->testFromInitialPose(-0.3, 0.3);
+  this->testFromInitialPose(-0.45, 0.45);
 }

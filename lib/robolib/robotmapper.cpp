@@ -162,7 +162,7 @@ double RobotMapper::inverseLaserSensorModel(const QPoint &pixel_point,
   double alpha{ map_resolution_meters_ };
 
   // Beta is the width of a sensor beam
-  double beta{ laser_scan.angle_increment };
+  double beta{ 0.05 };
 
   double max_range_meas{ std::min(laser_scan.max_range,
                                   laser_range + alpha / 2.) };
