@@ -23,9 +23,9 @@ public:
 private:
   ceres::Solver::Options ceres_solver_options_;
 
-  const double translation_weight_{ 0.1 };
-  const double rotation_weight_{ 1.5 };
-  const double occupied_space_weight_{ 1.0 };
+  const double translation_weight_{ 10. };
+  const double rotation_weight_{ 40. };
+  const double occupied_space_weight_{ 10.0 };
 };
 }
 

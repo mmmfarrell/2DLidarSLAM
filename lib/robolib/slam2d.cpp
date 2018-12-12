@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "slam2d.h"
+#include "roboutils.h"
 
 namespace robo
 {
@@ -36,6 +37,16 @@ void Slam2D::updateRobotPoseEstimate(double velocity, double omega, double dt)
 
 void Slam2D::updateMap(const LaserScan &laser_scan)
 {
+  if (!first_update_)
+  {
+    Eigen::MatrixXd point_cloud;
+    robo::laserScanToPoints(laser_scan, point_cloud);
+    Eigen::Vector3d pose_estimate;
+    scan_matcher_.Match(robot_pose_, point_cloud, grid_map_, pose_estimate,
+                        &ceres_summary_);
+    //std::cout << "pose est: " << std::endl << pose_estimate << std::endl;
+    robot_pose_ = pose_estimate;
+  }
   for (int pix_row{ 0 }; pix_row < grid_map_.getMapPixelRows(); pix_row++)
   {
     for (int pix_col{ 0 }; pix_col < grid_map_.getMapPixelCols(); pix_col++)
@@ -48,11 +59,13 @@ void Slam2D::updateMap(const LaserScan &laser_scan)
       grid_map_.addLogOdds(pix_point, meas_model);
     }
   }
+  first_update_ = false;
 }
 
 void Slam2D::resetMap()
 {
   grid_map_.resetMap();
+  first_update_ = true;
 }
 
 void Slam2D::resetRobotPose()

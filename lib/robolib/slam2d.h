@@ -7,9 +7,11 @@
 #include <QPointF>
 
 #include <Eigen/Core>
+#include <ceres/ceres.h>
 
 #include "grid2d.h"
 #include "laserscan.h"
+#include "ceres_scan_matcher.h"
 
 namespace robo
 {
@@ -31,6 +33,10 @@ public:
 protected:
   robo::Grid2D grid_map_;
   Eigen::Vector3d robot_pose_;
+  robo::CeresScanMatcher scan_matcher_;
+  ceres::Solver::Summary ceres_summary_;
+
+  bool first_update_{ true };
 
   const double log_odds_null_{ 0. };
   const double log_odds_occupied_{ 0.2 };

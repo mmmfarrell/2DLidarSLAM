@@ -11,11 +11,10 @@ namespace robo
 {
 CeresScanMatcher::CeresScanMatcher()
 {
-  ceres_solver_options_.use_nonmonotonic_steps = true;
-  ceres_solver_options_.max_num_iterations = 50;
-  ceres_solver_options_.num_threads = 4;
+  ceres_solver_options_.use_nonmonotonic_steps = false;
+  ceres_solver_options_.max_num_iterations = 20;
+  ceres_solver_options_.num_threads = 1;
   ceres_solver_options_.linear_solver_type = ceres::DENSE_QR;
-
 }
 
 void CeresScanMatcher::Match(//const Eigen::Vector2d &target_translation,
@@ -40,8 +39,6 @@ void CeresScanMatcher::Match(//const Eigen::Vector2d &target_translation,
 
   const Eigen::Vector2d target_translation =
       initial_pose_estimate.block<2, 1>(0, 0);
-  //target_translation(0) = initial_pose_estimate(0);
-  //target_translation(1) = initial_pose_estimate(1);
 
   problem.AddResidualBlock(
       TranslationDeltaCostFunctor2D::CreateAutoDiffCostFunction(
