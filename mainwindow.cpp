@@ -179,8 +179,8 @@ void MainWindow::dynamicsTimerEvent()
   robot_->propagateDynamics(robot_dynamics_rate_s);
 
   double dt{ 1. / this->robot_dynamics_rate_hz_ };
-  double robot_vel{ robot_->getVelocity() };
-  double robot_omega{ robot_->getOmega() };
+  double robot_vel{ robot_->getNoisyVelocity(robot_vel_std_dev_) };
+  double robot_omega{ robot_->getNoisyOmega(robot_omega_std_dev_) };
 
   slammer_.updateRobotPoseEstimate(robot_vel, robot_omega, dt);
 }

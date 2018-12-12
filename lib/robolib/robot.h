@@ -2,6 +2,7 @@
 #define ROBOT_H
 
 #include <Eigen/Core>
+#include <random>
 
 namespace robo
 {
@@ -31,6 +32,9 @@ public:
   double getVelocity() const;
   double getOmega() const;
 
+  double getNoisyVelocity(double std_dev);
+  double getNoisyOmega(double std_dev);
+
   void resetDesiredVelocities();
 
   void setHeadingDegrees(double robot_heading_degrees);
@@ -49,6 +53,9 @@ private:
   stateVector state_;
   double desired_vel_;
   double desired_omega_;
+
+  std::default_random_engine random_gen_;
+  std::normal_distribution<double> normal_rand_dist_;
 
   stateVector xdot(stateVector state);
   void motorDynamics(double time_step);

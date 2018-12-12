@@ -58,6 +58,8 @@ protected:
 
   std::unique_ptr<robo::RobotMapper> robot_mapper_{ nullptr };
   robo::Slam2D slammer_;
+  double robot_vel_std_dev_{ 0.1 };
+  double robot_omega_std_dev_{ 0.1 };
 
   int velocity_scale_factor_;
   const int max_vel_scale_factor_{ 5 };

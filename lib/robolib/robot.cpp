@@ -1,6 +1,7 @@
 #include "robot.h"
 
 #include <Eigen/Core>
+#include <random>
 #include <math.h>
 
 namespace robo
@@ -44,6 +45,16 @@ double Robot::getVelocity() const
 double Robot::getOmega() const
 {
   return state_(Robot::OMEGA);
+}
+
+double Robot::getNoisyVelocity(double std_dev)
+{
+  return std_dev * normal_rand_dist_(random_gen_) + getVelocity();
+}
+
+double Robot::getNoisyOmega(double std_dev)
+{
+  return std_dev * normal_rand_dist_(random_gen_) + getOmega();
 }
 
 void Robot::resetDesiredVelocities()
