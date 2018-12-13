@@ -85,22 +85,24 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionIncrease_Speed_triggered()
 {
-  std::cout << "push" << std::endl;
+  this->incrementVelocityScaleFactor();
 }
 
 void MainWindow::on_actionDecrease_Speed_triggered()
 {
-  std::cout << "push" << std::endl;
+  this->decrementVelocityScaleFactor();
 }
 
 void MainWindow::on_actionReset_Pose_triggered()
 {
-  std::cout << "push" << std::endl;
+  robot_->resetState();
+  this->resetMappingMap();
+  this->resetSlamMap();
 }
 
 void MainWindow::on_actionMapReset_Map_triggered()
 {
-  std::cout << "push" << std::endl;
+  this->resetMappingMap();
 }
 
 void MainWindow::on_actionMapSave_Map_triggered()
@@ -110,7 +112,7 @@ void MainWindow::on_actionMapSave_Map_triggered()
 
 void MainWindow::on_actionSlamReset_Map_triggered()
 {
-  std::cout << "push" << std::endl;
+  this->resetSlamMap();
 }
 
 void MainWindow::on_actionSlamSave_Map_triggered()
