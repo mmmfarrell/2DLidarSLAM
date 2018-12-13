@@ -67,6 +67,14 @@ void Slam2D::resetRobotPose()
   robot_pose_.setZero();
 }
 
+void Slam2D::resetRobotPose(double x, double y, double yaw)
+{
+  //robot_pose_.setZero();
+  robot_pose_(0) = x;
+  robot_pose_(1) = y;
+  robot_pose_(2) = yaw;
+}
+
 void Slam2D::getRobotPoseEstimate(Eigen::Vector3d& pose) const
 {
   pose = robot_pose_;

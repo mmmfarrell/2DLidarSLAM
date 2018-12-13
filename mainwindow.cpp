@@ -94,6 +94,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     case Qt::Key_PageDown:
       this->decrementVelocityScaleFactor();
       break;
+    case Qt::Key_R:
+      this->resetMappingMap();
+      this->resetSlamMap();
+      break;
     case Qt::Key_Escape:
     case Qt::Key_Q:
       QApplication::quit();
@@ -201,4 +205,15 @@ void MainWindow::lidarTimerEvent()
   slammer_.updateMap(laser_scan);
   slammer_.getMap(map_image);
   slam_view_widget_->setImage(map_image);
+}
+
+void MainWindow::resetMappingMap()
+{
+  robot_mapper_->resetMap();
+}
+
+void MainWindow::resetSlamMap()
+{
+  slammer_.resetRobotPose(robot_->getX(), robot_->getY(), robot_->getHeading());
+  slammer_.resetMap();
 }

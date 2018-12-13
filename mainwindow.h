@@ -79,6 +79,9 @@ protected:
   int lidar_timer_id_;
   const double lidar_rate_hz_{ 5.0 };
   void lidarTimerEvent();
+
+  void resetMappingMap();
+  void resetSlamMap();
 };
 
 #endif  // MAINWINDOW_H

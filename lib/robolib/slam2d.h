@@ -26,6 +26,7 @@ public:
 
   void resetMap();
   void resetRobotPose();
+  void resetRobotPose(double x, double y, double yaw);
 
   void getRobotPoseEstimate(Eigen::Vector3d& pose) const;
   QRgb getUnknownColor() const;
