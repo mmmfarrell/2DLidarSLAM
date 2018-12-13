@@ -33,7 +33,20 @@ public:
   ~MainWindow();
 
 public slots:
+  void on_actionAbout_triggered();
   void on_actionExit_triggered();
+
+  void on_actionIncrease_Speed_triggered();
+  void on_actionDecrease_Speed_triggered();
+  void on_actionReset_Pose_triggered();
+
+  void on_actionMapReset_Map_triggered();
+  void on_actionMapSave_Map_triggered();
+
+  void on_actionSlamReset_Map_triggered();
+  void on_actionSlamSave_Map_triggered();
+
+  void on_actionShortcuts_triggered();
 
   void keyPressEvent(QKeyEvent *event);
   void keyReleaseEvent(QKeyEvent *event);

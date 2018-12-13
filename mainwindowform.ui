@@ -21,27 +21,55 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>812</width>
-     <height>21</height>
+     <width>1280</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionAbout"/>
     <addaction name="actionExit"/>
    </widget>
+   <widget class="QMenu" name="menuMapping">
+    <property name="title">
+     <string>Mapping</string>
+    </property>
+    <addaction name="actionMapReset_Map"/>
+    <addaction name="actionMapSave_Map"/>
+   </widget>
+   <widget class="QMenu" name="menuSLAM">
+    <property name="title">
+     <string>SLAM</string>
+    </property>
+    <addaction name="actionSlamReset_Map"/>
+    <addaction name="actionSlamSave_Map"/>
+   </widget>
+   <widget class="QMenu" name="menuRobot">
+    <property name="title">
+     <string>Robot</string>
+    </property>
+    <addaction name="actionIncrease_Speed"/>
+    <addaction name="actionDecrease_Speed"/>
+    <addaction name="actionReset_Pose"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionShortcuts"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuRobot"/>
+   <addaction name="menuMapping"/>
+   <addaction name="menuSLAM"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
    <property name="text">
     <string>Open</string>
-   </property>
-  </action>
-  <action name="actionAbout">
-   <property name="text">
-    <string>About</string>
    </property>
   </action>
   <action name="actionSave">
@@ -57,6 +85,51 @@
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionMapReset_Map">
+   <property name="text">
+    <string>Reset Map</string>
+   </property>
+  </action>
+  <action name="actionMapSave_Map">
+   <property name="text">
+    <string>Save Map</string>
+   </property>
+  </action>
+  <action name="actionSlamReset_Map">
+   <property name="text">
+    <string>Reset Map</string>
+   </property>
+  </action>
+  <action name="actionSlamSave_Map">
+   <property name="text">
+    <string>Save Map</string>
+   </property>
+  </action>
+  <action name="actionIncrease_Speed">
+   <property name="text">
+    <string>Increase Speed</string>
+   </property>
+  </action>
+  <action name="actionDecrease_Speed">
+   <property name="text">
+    <string>Decrease Speed</string>
+   </property>
+  </action>
+  <action name="actionReset_Pose">
+   <property name="text">
+    <string>Reset Pose</string>
+   </property>
+  </action>
+  <action name="actionShortcuts">
+   <property name="text">
+    <string>Shortcuts</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

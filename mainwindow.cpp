@@ -73,9 +73,54 @@ MainWindow::~MainWindow()
   delete main_window_ui_;
 }
 
+void MainWindow::on_actionAbout_triggered()
+{
+  std::cout << "push" << std::endl;
+}
+
 void MainWindow::on_actionExit_triggered()
 {
   QApplication::quit();
+}
+
+void MainWindow::on_actionIncrease_Speed_triggered()
+{
+  std::cout << "push" << std::endl;
+}
+
+void MainWindow::on_actionDecrease_Speed_triggered()
+{
+  std::cout << "push" << std::endl;
+}
+
+void MainWindow::on_actionReset_Pose_triggered()
+{
+  std::cout << "push" << std::endl;
+}
+
+void MainWindow::on_actionMapReset_Map_triggered()
+{
+  std::cout << "push" << std::endl;
+}
+
+void MainWindow::on_actionMapSave_Map_triggered()
+{
+  std::cout << "push" << std::endl;
+}
+
+void MainWindow::on_actionSlamReset_Map_triggered()
+{
+  std::cout << "push" << std::endl;
+}
+
+void MainWindow::on_actionSlamSave_Map_triggered()
+{
+  std::cout << "push" << std::endl;
+}
+
+void MainWindow::on_actionShortcuts_triggered()
+{
+  std::cout << "push" << std::endl;
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
