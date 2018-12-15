@@ -40,9 +40,11 @@ public slots:
   void on_actionDecrease_Speed_triggered();
   void on_actionReset_Pose_triggered();
 
+  void on_actionMapShowHide_triggered();
   void on_actionMapReset_Map_triggered();
   void on_actionMapSave_Map_triggered();
 
+  void on_actionSlamShowHide_triggered();
   void on_actionSlamReset_Map_triggered();
   void on_actionSlamSave_Map_triggered();
 

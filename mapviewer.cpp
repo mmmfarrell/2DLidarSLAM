@@ -15,7 +15,7 @@ MapViewer::MapViewer() : mapLabel(new QLabel)
   mapLabel->setScaledContents(true);
 
   this->setBackgroundRole(QPalette::Dark);
-  this->setWidget(mapLabel);
+  this->setWidget(mapLabel.get());
   this->setVisible(false);
 }
 
@@ -32,7 +32,13 @@ QSize MapViewer::sizeHint() const
 void MapViewer::setImage(const QImage& map_image)
 {
   mapLabel->setPixmap(QPixmap::fromImage(map_image));
+  map = map_image;
 
   this->setVisible(true);
   this->setWidgetResizable(true);
+}
+
+bool MapViewer::saveMap(const QString& file_name)
+{
+  return map.save(file_name);
 }

@@ -100,6 +100,14 @@ void MainWindow::on_actionReset_Pose_triggered()
   this->resetSlamMap();
 }
 
+void MainWindow::on_actionMapShowHide_triggered()
+{
+  if (map_dock_widget_->isVisible())
+    map_dock_widget_->setVisible(false);
+  else
+    map_dock_widget_->setVisible(true);
+}
+
 void MainWindow::on_actionMapReset_Map_triggered()
 {
   this->resetMappingMap();
@@ -107,7 +115,16 @@ void MainWindow::on_actionMapReset_Map_triggered()
 
 void MainWindow::on_actionMapSave_Map_triggered()
 {
-  std::cout << "push" << std::endl;
+  std::cout << map_view_widget_->saveMap("occupancy_grid_map.png") << "save"
+            << std::endl;
+}
+
+void MainWindow::on_actionSlamShowHide_triggered()
+{
+  if (slam_dock_widget_->isVisible())
+    slam_dock_widget_->setVisible(false);
+  else
+    slam_dock_widget_->setVisible(true);
 }
 
 void MainWindow::on_actionSlamReset_Map_triggered()
