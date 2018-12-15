@@ -1,6 +1,3 @@
 [submodule "lib/robolib/lib/googletest"]
 	path = lib/robolib/lib/googletest
 	url = git@github.com:google/googletest.git
-[submodule "lib/robolib/lib/ceres-solver"]
-	path = lib/robolib/lib/ceres-solver
-	url = git@github.com:ceres-solver/ceres-solver.git
