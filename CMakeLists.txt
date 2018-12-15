@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4)
-project(FinalProject)
+project(2DLidarSLAM)
 
 FIND_PACKAGE(Qt5Widgets)
 FIND_PACKAGE(Qt5Gui)
