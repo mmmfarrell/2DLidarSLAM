@@ -41,6 +41,10 @@ SET(MYSOURCE
     models.cpp
     laserscanwidget.cpp
     mapviewer.cpp
+    aboutwindow.ui
+    aboutwindow.cpp
+    shortcutswindow.ui
+    shortcutswindow.cpp
     )
 
 add_executable(${PROJECT_NAME}

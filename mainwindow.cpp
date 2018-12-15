@@ -7,11 +7,14 @@
 #include "laserscanwidget.h"
 #include "robotmapper.h"
 #include "mapviewer.h"
+#include "aboutwindow.h"
+#include "shortcutswindow.h"
 
 #include "icp.h"
 #include "roboutils.h"
 
 #include <limits>
+#include <memory>
 
 #include <QDockWidget>
 #include <QKeyEvent>
@@ -75,7 +78,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionAbout_triggered()
 {
-  std::cout << "push" << std::endl;
+  std::unique_ptr<AboutWindow> about{ new AboutWindow(this) };
+  about->exec();
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -115,8 +119,7 @@ void MainWindow::on_actionMapReset_Map_triggered()
 
 void MainWindow::on_actionMapSave_Map_triggered()
 {
-  std::cout << map_view_widget_->saveMap("occupancy_grid_map.png") << "save"
-            << std::endl;
+  map_view_widget_->saveMap("occupancy_grid_map.png");
 }
 
 void MainWindow::on_actionSlamShowHide_triggered()
@@ -134,12 +137,13 @@ void MainWindow::on_actionSlamReset_Map_triggered()
 
 void MainWindow::on_actionSlamSave_Map_triggered()
 {
-  std::cout << "push" << std::endl;
+  slam_view_widget_->saveMap("slam_map.png");
 }
 
 void MainWindow::on_actionShortcuts_triggered()
 {
-  std::cout << "push" << std::endl;
+  std::unique_ptr<ShortcutsWindow> shortcuts{ new ShortcutsWindow(this) };
+  shortcuts->exec();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
