@@ -45,6 +45,8 @@ SET(MYSOURCE
     aboutwindow.cpp
     shortcutswindow.ui
     shortcutswindow.cpp
+    helperwidget.ui
+    helperwidget.cpp
     )
 
 add_executable(${PROJECT_NAME}

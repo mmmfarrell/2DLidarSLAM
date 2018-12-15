@@ -18,6 +18,7 @@ class QTimerEvent;
 class QDockWidget;
 class LaserScanWidget;
 class MapViewer;
+class HelperWidget;
 
 namespace Ui
 {
@@ -31,6 +32,8 @@ class MainWindow : public QMainWindow
 public:
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
+
+  void setVelocityScaleFactor(int new_scale_factor);
 
 public slots:
   void on_actionAbout_triggered();
@@ -65,6 +68,9 @@ protected:
 
   QDockWidget *slam_dock_widget_{ nullptr };
   MapViewer* slam_view_widget_{ nullptr };
+
+  QDockWidget *helper_dock_widget_{ nullptr };
+  HelperWidget* helper_widget_{ nullptr };
 
   std::unique_ptr<robo::Robot> robot_{ nullptr };
 

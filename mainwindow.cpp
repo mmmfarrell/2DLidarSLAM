@@ -9,6 +9,7 @@
 #include "mapviewer.h"
 #include "aboutwindow.h"
 #include "shortcutswindow.h"
+#include "helperwidget.h"
 
 #include "icp.h"
 #include "roboutils.h"
@@ -20,9 +21,6 @@
 #include <QKeyEvent>
 #include <QImage>
 #include <QTimerEvent>
-
-#include <QDebug> // TODO remove
-#include <iostream> // TODO remove
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow{parent},
@@ -55,18 +53,36 @@ MainWindow::MainWindow(QWidget *parent) :
   slammer_.getMap(map_image);
   slam_view_widget_->setImage(map_image);
 
+  helper_dock_widget_ = new QDockWidget("Helper Widget", this);
+  this->addDockWidget(Qt::BottomDockWidgetArea, helper_dock_widget_);
+  helper_widget_ = new HelperWidget;
+  helper_dock_widget_->setWidget(helper_widget_);
+  this->connect(helper_widget_, &HelperWidget::scaleFactorChanged, this,
+                &MainWindow::setVelocityScaleFactor);
+  this->connect(helper_widget_, &HelperWidget::resetMap, this,
+                &MainWindow::on_actionMapReset_Map_triggered);
+  this->connect(helper_widget_, &HelperWidget::resetSlamMap, this,
+                &MainWindow::on_actionSlamReset_Map_triggered);
+  this->connect(helper_widget_, &HelperWidget::resetRobotPose, this,
+                &MainWindow::on_actionReset_Pose_triggered);
+
   this->setupLidar();
 
   osg_widget_->displayRobot(robot_.get());
   this->setCentralWidget(osg_widget_);
   
-  velocity_scale_factor_ = 1;
+  velocity_scale_factor_ = 3;
 
   double robot_dynamics_rate_ms{ 1. / robot_dynamics_rate_hz_ * 1000. };
   dynamics_timer_id_ = this->startTimer(robot_dynamics_rate_ms);
 
   double lidar_rate_ms{ 1. / lidar_rate_hz_ * 1000. };
   lidar_timer_id_ = this->startTimer(lidar_rate_ms);
+}
+
+void MainWindow::setVelocityScaleFactor(int new_scale_factor)
+{
+  velocity_scale_factor_ = new_scale_factor;
 }
 
 MainWindow::~MainWindow()
@@ -198,14 +214,14 @@ void MainWindow::incrementVelocityScaleFactor()
 {
   if (velocity_scale_factor_ != max_vel_scale_factor_)
     velocity_scale_factor_++;
-  qDebug() << "Velocity scale factor: " << velocity_scale_factor_;
+  helper_widget_->updateRobotVelocityFactor(velocity_scale_factor_);
 }
 
 void MainWindow::decrementVelocityScaleFactor()
 {
   if (velocity_scale_factor_ != 1)
     velocity_scale_factor_--;
-  qDebug() << "Velocity scale factor: " << velocity_scale_factor_;
+  helper_widget_->updateRobotVelocityFactor(velocity_scale_factor_);
 }
 
 void MainWindow::initKeysPressedMap()
