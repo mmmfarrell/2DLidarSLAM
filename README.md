@@ -1,5 +1,6 @@
 # Final Project
 By: Michael Farrell
+![](example_vid.gif)
 
 ## Project Description
 For my final project I want to simulate a ground robot driving around a
