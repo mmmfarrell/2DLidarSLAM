@@ -80,16 +80,26 @@ MainWindow::MainWindow(QWidget *parent) :
   lidar_timer_id_ = this->startTimer(lidar_rate_ms);
 }
 
-void MainWindow::setVelocityScaleFactor(int new_scale_factor)
-{
-  velocity_scale_factor_ = new_scale_factor;
-}
-
 MainWindow::~MainWindow()
 {
   this->killTimer(dynamics_timer_id_);
   this->killTimer(lidar_timer_id_);
+
   delete main_window_ui_;
+  delete osg_widget_;
+  delete laser_scan_widget_;
+  delete laser_scan_dock_widget_;
+  delete map_view_widget_;
+  delete map_dock_widget_;
+  delete slam_view_widget_;
+  delete slam_dock_widget_;
+  delete helper_widget_;
+  delete helper_dock_widget_;
+}
+
+void MainWindow::setVelocityScaleFactor(int new_scale_factor)
+{
+  velocity_scale_factor_ = new_scale_factor;
 }
 
 void MainWindow::on_actionAbout_triggered()
