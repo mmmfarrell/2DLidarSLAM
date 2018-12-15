@@ -6,20 +6,21 @@
 #include "laserscanner.h"
 #include "laserscanwidget.h"
 #include "robotmapper.h"
+#include "slam2d.h"
 #include "mapviewer.h"
 #include "aboutwindow.h"
 #include "shortcutswindow.h"
 #include "helperwidget.h"
-
-#include "icp.h"
 #include "roboutils.h"
 
 #include <limits>
 #include <memory>
 
 #include <QDockWidget>
+#include <QFileDialog>
 #include <QKeyEvent>
 #include <QImage>
+#include <QString>
 #include <QTimerEvent>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -145,7 +146,14 @@ void MainWindow::on_actionMapReset_Map_triggered()
 
 void MainWindow::on_actionMapSave_Map_triggered()
 {
-  map_view_widget_->saveMap("occupancy_grid_map.png");
+  QFileDialog objFlDlg(this);
+  objFlDlg.setAcceptMode(QFileDialog::AcceptSave);
+  objFlDlg.selectFile("occupancy_grid_map.png");
+  if (objFlDlg.exec())
+  {
+    QString full_file_path{ objFlDlg.selectedFiles().at(0) };
+    map_view_widget_->saveMap(full_file_path);
+  }
 }
 
 void MainWindow::on_actionSlamShowHide_triggered()
@@ -163,7 +171,14 @@ void MainWindow::on_actionSlamReset_Map_triggered()
 
 void MainWindow::on_actionSlamSave_Map_triggered()
 {
-  slam_view_widget_->saveMap("slam_map.png");
+  QFileDialog objFlDlg(this);
+  objFlDlg.setAcceptMode(QFileDialog::AcceptSave);
+  objFlDlg.selectFile("slam_map.png");
+  if (objFlDlg.exec())
+  {
+    QString full_file_path{ objFlDlg.selectedFiles().at(0) };
+    slam_view_widget_->saveMap(full_file_path);
+  }
 }
 
 void MainWindow::on_actionShortcuts_triggered()
